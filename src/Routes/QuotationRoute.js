@@ -4,19 +4,19 @@ const quotation = require("../Controllers/QuotationController");
 
 router
   .route("/quotation")
-//   .get(addToCard.getRecentAddToJobCard)
+  .get(quotation.getRecentQuotation)
   .post(quotation.createQuotationCard);
 
 router
-  .route("/quotation/all/:username")
+  .route("/quotation/all")
   .get(quotation.getAllQuotation)
   .post(quotation.filterCard);
-router.route("/quotation/:job_no").get(quotation.getPreviewQuotation);
+router.route("/quotation/:id").get(quotation.getPreviewQuotation);
 
 router
   .route("/quotation/one/:id")
+  .get(quotation.getSpecificCard)
+  .put(quotation.updateQuotation)
   .delete(quotation.deleteQuotation);
-  // .get(addToCard.getSpecificCard)
-  // .put(addToCard.updateCard)
 
 module.exports = router;

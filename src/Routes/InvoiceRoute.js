@@ -4,19 +4,19 @@ const invoice = require("../Controllers/InvoiceController");
 
 router
   .route("/invoice")
-//   .get(addToCard.getRecentAddToJobCard)
+  .get(invoice.getRecentInvoiceCard)
   .post(invoice.createInvoiceCard);
 
 router
-  .route("/invoice/all/:username")
+  .route("/invoice/all")
   .get(invoice.getAllInvoice)
   .post(invoice.filterCard);
-router.route("/invoice/:job_no").get(invoice.getPreviewInvoice);
+router.route("/invoice/:id").get(invoice.getPreviewInvoice);
 
 router
   .route("/invoice/one/:id")
-  .delete(invoice.deleteInvoice);
-  // .get(addToCard.getSpecificCard)
-  // .put(addToCard.updateCard)
+  .delete(invoice.deleteInvoice)
+  .get(invoice.getSpecificInvoice)
+  .put(invoice.updateInvoice)
 
 module.exports = router;

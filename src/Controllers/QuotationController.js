@@ -1,20 +1,30 @@
 const Quotation = require("../Models/QuotationModel");
 
-exports.createQuotationCard = async (req, res) => {
+exports.getRecentQuotation = async (req, res) => {
   try {
-    const existingQuotation = await Quotation.findOne({
-      job_no: req.body.job_no,
-    });
+    const recentQuotation = await Quotation.find({})
+      .sort({ createdAt: -1 })
+      .limit(1);
 
-    if (existingQuotation) {
-      return res.status(400).json({
-        message: "Order no already exists.",
+    if (recentQuotation.length === 0) {
+      return res.json({
+        message: "No recent job card found.",
       });
     }
+
+    res.json(recentQuotation[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.createQuotationCard = async (req, res) => {
+  try {
     const quotationPost = new Quotation(req.body);
 
     const result = await quotationPost.save();
-   
+
     res.status(200).json({
       message: "Successfully quotation post",
       result,
@@ -27,9 +37,9 @@ exports.createQuotationCard = async (req, res) => {
 
 exports.getPreviewQuotation = async (req, res) => {
   try {
-    const job_no = req.params.job_no;
-    console.log(job_no);
-    const quotation = await Quotation.findOne({ job_no });
+    const id = req.params.id;
+    // console.log(job_no);
+    const quotation = await Quotation.findOne({ _id: id });
 
     // if (quotation.length === 0) {
     //   return res.json({
@@ -45,8 +55,8 @@ exports.getPreviewQuotation = async (req, res) => {
 };
 exports.getAllQuotation = async (req, res) => {
   try {
-    const username = req.params.username;
-    const allQuotation = await Quotation.find({ username }).sort({
+    // const username = req.params.username;
+    const allQuotation = await Quotation.find({}).sort({
       createdAt: -1,
     });
     if (allQuotation.length === 0) {
@@ -88,7 +98,7 @@ exports.filterCard = async (req, res) => {
       query.car_registration_no = { $regex: new RegExp(filterType, "i") };
     }
     if (select === "Mobile Number") {
-      const numericFilterType = parseInt(filterType,10);
+      const numericFilterType = parseInt(filterType, 10);
 
       if (!isNaN(numericFilterType)) {
         query.phone_number = numericFilterType;
@@ -106,8 +116,8 @@ exports.filterCard = async (req, res) => {
       return res.status(200).json({ message: "No matching found", result: [] });
     }
     // Send the result as JSON response
-    console.log(result)
-    res.json({message:"Filter successful",result});
+    console.log(result);
+    res.json({ message: "Filter successful", result });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -121,5 +131,34 @@ exports.deleteQuotation = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.getSpecificCard = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const quotation = await Quotation.findOne({ _id: id });
+    res.status(200).json(quotation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.updateQuotation = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateCard = req.body;
+    const updateInfo = await Quotation.updateMany(
+      { _id: id },
+      {
+        $set: updateCard,
+      },
+      { runValidators: true }
+    );
+    res.status(200).json({
+      message: "Successfully update card.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.send("Internal server error");
   }
 };

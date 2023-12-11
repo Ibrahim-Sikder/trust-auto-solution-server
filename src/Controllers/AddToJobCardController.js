@@ -105,6 +105,24 @@ exports.filterCard = async (req, res) => {
   }
 };
 
+exports.getRecentPostAddToJobCard = async (req, res) => {
+  try {
+    const recentPostJobCard = await AddToJobCard.find({})
+      .sort({ createdAt: -1 })
+      .limit(1);
+
+    if (recentPostJobCard.length === 0) {
+      return res.json({
+        message: "No recent job card found.",
+      });
+    }
+
+    res.json(recentPostJobCard[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 exports.getRecentAddToJobCard = async (req, res) => {
   try {
     const recentJobCard = await AddToJobCard.find({})
@@ -125,8 +143,25 @@ exports.getRecentAddToJobCard = async (req, res) => {
 };
 exports.getPreviewJobCard = async (req, res) => {
   try {
+    const id = req.params.id;
+    const jobCard = await AddToJobCard.findOne({ _id: id });
+  
+    // if (jobCard.length === 0) {
+    //   return res.json({
+    //     message: "No job card found.",
+    //   });
+    // }
+
+    res.status(200).json(jobCard);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.getPreviewJobNoCard = async (req, res) => {
+  try {
     const job_no = req.params.job_no;
-    const jobCard = await AddToJobCard.findOne({ job_no });
+    const jobCard = await AddToJobCard.findOne({job_no });
   
     // if (jobCard.length === 0) {
     //   return res.json({

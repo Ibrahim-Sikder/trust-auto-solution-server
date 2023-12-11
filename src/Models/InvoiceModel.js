@@ -6,6 +6,10 @@ const invoiceSchema = new mongoose.Schema(
       type: String || Number,
       // required: [true],
     },
+    id: {
+      type: String,
+      // required: [true],
+    },
     job_no: {
       type: Number,
     },

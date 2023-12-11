@@ -1,20 +1,31 @@
 const Invoice = require("../Models/InvoiceModel");
 
-exports.createInvoiceCard = async (req, res) => {
-  try {
-    const existingInvoice = await Invoice.findOne({
-      job_no: req.body.job_no,
-    });
 
-    if (existingInvoice) {
-      return res.status(400).json({
-        message: "Order no already exists.",
+exports.getRecentInvoiceCard = async (req, res) => {
+  try {
+    const recentInvoice = await Invoice.find({})
+      .sort({ createdAt: -1 })
+      .limit(1);
+
+    if (recentInvoice.length === 0) {
+      return res.json({
+        message: "No recent job card found.",
       });
     }
-    const InvoicePost = new Invoice(req.body);
 
-    const result = await InvoicePost.save();
-   
+    res.json(recentInvoice[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.createInvoiceCard = async (req, res) => {
+  try {
+    
+    const invoicePost = new Invoice(req.body);
+
+    const result = await invoicePost.save();
+
     res.status(200).json({
       message: "Successfully Invoice post",
       result,
@@ -27,10 +38,10 @@ exports.createInvoiceCard = async (req, res) => {
 
 exports.getPreviewInvoice = async (req, res) => {
   try {
-    const job_no = req.params.job_no;
-    console.log(job_no);
-    const invoice = await Invoice.findOne({ job_no });
-   console.log(invoice)
+    const id = req.params.id;
+    console.log(id);
+    const invoice = await Invoice.findOne({ _id: id });
+    console.log(invoice);
     // if (Invoice.length === 0) {
     //   return res.json({
     //     message: "No Invoice card found.",
@@ -45,8 +56,8 @@ exports.getPreviewInvoice = async (req, res) => {
 };
 exports.getAllInvoice = async (req, res) => {
   try {
-    const username = req.params.username;
-    const allInvoice = await Invoice.find({ username }).sort({
+    // const username = req.params.username;
+    const allInvoice = await Invoice.find({}).sort({
       createdAt: -1,
     });
     if (allInvoice.length === 0) {
@@ -88,7 +99,7 @@ exports.filterCard = async (req, res) => {
       query.car_registration_no = { $regex: new RegExp(filterType, "i") };
     }
     if (select === "Mobile Number") {
-      const numericFilterType = parseInt(filterType,10);
+      const numericFilterType = parseInt(filterType, 10);
 
       if (!isNaN(numericFilterType)) {
         query.phone_number = numericFilterType;
@@ -106,8 +117,8 @@ exports.filterCard = async (req, res) => {
       return res.status(200).json({ message: "No matching found", result: [] });
     }
     // Send the result as JSON response
-    console.log(result)
-    res.json({message:"Filter successful",result});
+    console.log(result);
+    res.json({ message: "Filter successful", result });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -121,5 +132,34 @@ exports.deleteInvoice = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.getSpecificInvoice = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const invoice = await Invoice.findOne({ _id: id });
+    res.status(200).json(invoice);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+exports.updateInvoice = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const updateCard = req.body;
+    const updateInfo = await Invoice.updateMany(
+      { _id: id },
+      {
+        $set: updateCard,
+      },
+      { runValidators: true }
+    );
+    res.status(200).json({
+      message: "Successfully update card.",
+    });
+  } catch (error) {
+    console.log(error);
+    res.send("Internal server error");
   }
 };
