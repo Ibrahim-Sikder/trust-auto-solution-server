@@ -19,6 +19,10 @@ const addToJobCardSchema = new mongoose.Schema(
       type: Number || String,
       required: [true, "Chassis number is required."],
     },
+    carReg_no: {
+      type: String,
+      required: [true, "Car Reg number is required."],
+    },
     car_registration_no: {
       type: String || Number,
       // required: [true, "Car registration number is required."],
@@ -58,12 +62,14 @@ const addToJobCardSchema = new mongoose.Schema(
     },
     contact_number: {
       type: Number,
+      min: [11, 'Phone number must be 11 character!'],
     },
     driver_name: {
       type: String,
     },
     phone_number: {
       type: Number,
+      min: [11, 'Phone number must be 11 character!'],
     },
     vehicle_interior_parts: {
       type: String,
