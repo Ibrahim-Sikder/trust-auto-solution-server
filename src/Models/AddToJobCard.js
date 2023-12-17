@@ -32,11 +32,11 @@ const addToJobCardSchema = new mongoose.Schema(
       // required: [true ],
     },
     mileage: {
-      type: Number,
+      type: String || Number,
       // required: [true ],
     },
     color: {
-      type: String,
+      type: String || Number,
       // required: [true ],
     },
     engine_no: {
