@@ -4,100 +4,92 @@ const addToJobCardSchema = new mongoose.Schema(
   {
     username: {
       type: String || Number,
-      // required: [true],
+      required: [true, "Username is required."],
     },
     job_no: {
       type: Number,
       default: 101,
-      // required: [true ],
+      required: [true, "Job number is required."],
     },
     date: {
       type: String,
-      // required: [true ],
+      required: [true, "Date is required."],
     },
-    vin_no: {
-      type: Number,
-      // required: [true ],
+    chassis_no: {
+      type: Number || String,
+      required: [true, "Chassis number is required."],
     },
     car_registration_no: {
       type: String || Number,
-      // required: [true ],
+      // required: [true, "Car registration number is required."],
     },
-    car_model: {
-      type: String || Number,
-      // required: [true ],
+    vehicle_model: {
+      type: Number,
+      required: [true, "Vehicle model is required."],
     },
-    car_make: {
+    vehicle_brand: {
       type: String || Number,
-      // required: [true ],
+      required: [true, "Vehicle brand is required."],
     },
     mileage: {
-      type: String || Number,
-      // required: [true ],
+      type: Number,
+      required: [true, "Mileage is required."],
     },
     color: {
       type: String || Number,
-      // required: [true ],
+      required: [true, "Color is required."],
     },
     engine_no: {
       type: String || Number,
-      // required: [true ],
+      required: [true, "Engine number is required."],
     },
-    reference_number: {
+    referenc_name: {
       type: String,
-      // required: [true ],
     },
     company_name: {
       type: String,
-      // required: [true ],
+    },
+    vehicle_category: {
+      type: String,
+      required:[true, "Vehicle category is required."]
     },
     customer_name: {
       type: String,
-      // required: [true ],
     },
     contact_number: {
       type: Number,
-      // required: [true ],
     },
     driver_name: {
       type: String,
-      // required: [true ],
     },
     phone_number: {
       type: Number,
-      // required: [true ],
     },
     vehicle_interior_parts: {
       type: String,
-      // required: [true ],
     },
     reported_defect: {
       type: String,
-      // required: [true ],
     },
     reported_action: {
       type: String,
-      // required: [true ],
     },
     vehicle_body_report: {
       type: String,
-      // required: [true ],
     },
     technician_name: {
       type: String,
-      // required: [true ],
     },
     technician_signature: {
       type: String,
-      // required: [true ],
+      required: [true, "Technician signature is required."],
     },
     technician_date: {
       type: String,
-      // required: [true ],
+      required: [true, "Technician date is required."],
     },
     vehicle_owner: {
       type: String,
-      // required: [true ],
     },
   },
   {
