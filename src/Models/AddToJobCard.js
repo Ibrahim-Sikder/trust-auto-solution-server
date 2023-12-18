@@ -16,7 +16,7 @@ const addToJobCardSchema = new mongoose.Schema(
       required: [true, "Date is required."],
     },
     chassis_no: {
-      type: Number || String,
+      type: String || Number,
       required: [true, "Chassis number is required."],
     },
     carReg_no: {
