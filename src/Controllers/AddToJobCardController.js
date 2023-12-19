@@ -3,7 +3,7 @@ const AddToJobCard = require("../Models/AddToJobCard");
 exports.createAddToJobCard = async (req, res) => {
   try {
     const addToCardPost = new AddToJobCard(req.body);
-
+console.log(addToCardPost)
     const result = await addToCardPost.save();
     console.log(result);
     res.status(200).json({
