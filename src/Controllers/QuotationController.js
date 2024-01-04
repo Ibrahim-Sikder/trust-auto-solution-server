@@ -162,3 +162,41 @@ exports.updateQuotation = async (req, res) => {
     res.send("Internal server error");
   }
 };
+
+exports.updateByIndex = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { index } = req.body;
+    const getQuotation = await Quotation.findOne({ _id: id });
+    const updateQuotation = await Quotation.updateOne(
+      { _id: id },
+      { $pull: { descriptions: { $eq: getQuotation.descriptions[index] } } },
+      { runValidators: true }
+    );
+ 
+    res.status(200).json({ message: "Description deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// exports.updateByIndex = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const { index } = req.body;
+
+//     const getQuotation = await Quotation.findOne({ _id: id });
+
+//     const updateQuotation = await Quotation.updateOne(
+//       { _id: id },
+//       { $pull: getQuotation.descriptions },
+//       { runValidators: true }
+//     );
+
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+

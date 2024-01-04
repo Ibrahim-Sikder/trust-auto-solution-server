@@ -11,7 +11,10 @@ router
   .route("/quotation/all")
   .get(quotation.getAllQuotation)
   .post(quotation.filterCard);
-router.route("/quotation/:id").get(quotation.getPreviewQuotation);
+router
+  .route("/quotation/:id")
+  .get(quotation.getPreviewQuotation)
+  .put(quotation.updateByIndex);
 
 router
   .route("/quotation/one/:id")

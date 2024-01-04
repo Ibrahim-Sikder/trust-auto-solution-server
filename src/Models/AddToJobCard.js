@@ -47,7 +47,7 @@ const addToJobCardSchema = new mongoose.Schema(
       type: String || Number,
       required: [true, "Engine number is required."],
     },
-    referenc_name: {
+    reference_name: {
       type: String,
     },
     company_name: {
