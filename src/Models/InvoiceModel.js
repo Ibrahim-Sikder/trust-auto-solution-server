@@ -36,27 +36,37 @@ const invoiceSchema = new mongoose.Schema(
       type: Number,
       // required: [true ],
     },
-    descriptions: [
+    // descriptions: [
+    //   {
+    //     type: String,
+    //     // required: [true ],
+    //   },
+    // ],
+    // quantity: [
+    //   {
+    //     type: Number,
+    //     // required: [true ],
+    //   },
+    // ],
+    // rate: [
+    //   {
+    //     type: Number,
+    //     // required: [true ],
+    //   },
+    // ],
+    // amount: [
+    //   {
+    //     type: Number,
+    //     // required: [true ],
+    //   },
+    // ],
+    input_data: [
       {
-        type: String,
-        // required: [true ],
-      },
-    ],
-    quantity: [
-      {
-        type: Number,
-        // required: [true ],
-      },
-    ],
-    rate: [
-      {
-        type: Number,
-        // required: [true ],
-      },
-    ],
-    amount: [
-      {
-        type: Number,
+        
+        description:String,
+        quantity: Number,
+        rate: Number,
+        total: Number,
         // required: [true ],
       },
     ],
