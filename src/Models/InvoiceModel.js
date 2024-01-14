@@ -32,6 +32,10 @@ const invoiceSchema = new mongoose.Schema(
       type: Number,
       // required: [true ],
     },
+    mileage: {
+      type: Number,
+      // required: [true ],
+    },
     serial_no: {
       type: Number,
       // required: [true ],
