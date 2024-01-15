@@ -28,10 +28,15 @@ const quotationSchema = new mongoose.Schema(
       type: Number,
       // required: [true ],
     },
+    mileage: {
+      type: Number,
+      // required: [true ],
+    },
     serial_no: {
       type: Number,
       // required: [true ],
     },
+
     // descriptions: [
     //   {
     //     type: String,
@@ -58,8 +63,7 @@ const quotationSchema = new mongoose.Schema(
     // ],
     input_data: [
       {
-        
-        description:String,
+        description: { type: String, trim: true },
         quantity: Number,
         rate: Number,
         total: Number,
