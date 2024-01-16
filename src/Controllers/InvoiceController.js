@@ -163,3 +163,20 @@ exports.updateInvoice = async (req, res) => {
     res.send("Internal server error");
   }
 };
+exports.updateByIndex = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { index } = req.body;
+    const getInvoice = await Invoice.findOne({ _id: id });
+    const updateQuotation = await Invoice.updateOne(
+      { _id: id },
+      { $pull: { input_data: { $eq: getInvoice.input_data[index] } } },
+      { runValidators: true }
+    );
+ 
+    res.status(200).json({ message: "Deleted successful" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
