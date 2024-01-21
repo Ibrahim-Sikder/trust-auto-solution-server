@@ -15,7 +15,7 @@ const quotationSchema = new mongoose.Schema(
     },
 
     car_registration_no: {
-      type: String || Number,
+      type: String,
       // required: [true ],
     },
 
