@@ -4,7 +4,7 @@ const addToJobCardSchema = new mongoose.Schema(
   {
     username: {
       type: String || Number,
-      required: [true, "Username is required."],
+      // required: [true, "Username is required."],
     },
     job_no: {
       type: Number,

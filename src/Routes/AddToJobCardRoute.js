@@ -12,7 +12,7 @@ router
    
 
 router
-  .route("/jobCard/all/:username")
+  .route("/jobCard/all")
   .get(addToCard.getAllAddToJobCard)
   .post(addToCard.filterCard);
 router.route("/jobCard/:id").get(addToCard.getPreviewJobCard);

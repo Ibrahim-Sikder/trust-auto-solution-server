@@ -71,58 +71,104 @@ exports.getAllQuotation = async (req, res) => {
   }
 };
 
+// exports.filterCard = async (req, res) => {
+//   try {
+//     const username = req.params.username;
+//     const { select, filterType } = req.body;
+//     console.log(req.body);
+//     if (username !== username) {
+//       return res.status(403).json({ error: "Unauthorized" });
+//     }
+
+//     let query = {};
+
+//     if (select === "Customer Name") {
+//       query.customer_name = { $regex: new RegExp(filterType, "i") };
+//     }
+//     if (select === "Order Number") {
+//       const numericFilterType = parseInt(filterType, 10);
+
+//       if (!isNaN(numericFilterType)) {
+//         query.job_no = numericFilterType;
+//       } else {
+//         return res.status(400).json({ error: "Invalid filterType for SL No" });
+//       }
+//     }
+//     if (select === "Car Number") {
+//       query.car_registration_no = { $regex: new RegExp(filterType, "i") };
+//     }
+//     if (select === "Mobile Number") {
+//       const numericFilterType = parseInt(filterType, 10);
+
+//       if (!isNaN(numericFilterType)) {
+//         query.phone_number = numericFilterType;
+//       } else {
+//         return res
+//           .status(400)
+//           .json({ error: "Invalid filterType for this phone number" });
+//       }
+//     }
+
+//     // Perform the MongoDB query with the constructed filter
+//     const result = await Quotation.find(query);
+//     if (!result || result.length === 0) {
+//       // Send a success message with an empty result array
+//       return res.status(200).json({ message: "No matching found", result: [] });
+//     }
+//     // Send the result as JSON response
+//     console.log(result);
+//     res.json({ message: "Filter successful", result });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+
 exports.filterCard = async (req, res) => {
   try {
-    const username = req.params.username;
-    const { select, filterType } = req.body;
-    console.log(req.body);
-    if (username !== username) {
-      return res.status(403).json({ error: "Unauthorized" });
+    const { filterType } = req.body;
+
+    const isNumeric = !isNaN(Number(filterType));
+
+    let quotation;
+
+    if (!isNumeric) {
+      // Case-insensitive partial string matching for string fields
+      quotation = await Quotation.find({
+        $or: [
+          { customer_name: { $regex: filterType, $options: "i" } },
+          { date: { $regex: filterType, $options: "i" } },
+          { car_registration_no: { $regex: filterType, $options: "i" } },
+        ].filter(Boolean),
+      });
+    } else {
+      // Exact match for numeric fields
+      quotation = await Quotation.find({
+        $or: [
+          { job_no: filterType },
+          { contact_number: filterType },
+        ].filter(Boolean),
+      });
     }
 
-    let query = {};
-
-    if (select === "Customer Name") {
-      query.customer_name = { $regex: new RegExp(filterType, "i") };
-    }
-    if (select === "Order Number") {
-      const numericFilterType = parseInt(filterType, 10);
-
-      if (!isNaN(numericFilterType)) {
-        query.job_no = numericFilterType;
-      } else {
-        return res.status(400).json({ error: "Invalid filterType for SL No" });
-      }
-    }
-    if (select === "Car Number") {
-      query.car_registration_no = { $regex: new RegExp(filterType, "i") };
-    }
-    if (select === "Mobile Number") {
-      const numericFilterType = parseInt(filterType, 10);
-
-      if (!isNaN(numericFilterType)) {
-        query.phone_number = numericFilterType;
-      } else {
-        return res
-          .status(400)
-          .json({ error: "Invalid filterType for this phone number" });
-      }
+    if (!quotation || quotation.length === 0) {
+      return res.json({ message: "No matching found", result: [] });
     }
 
-    // Perform the MongoDB query with the constructed filter
-    const result = await Quotation.find(query);
-    if (!result || result.length === 0) {
-      // Send a success message with an empty result array
-      return res.status(200).json({ message: "No matching found", result: [] });
-    }
-    // Send the result as JSON response
-    console.log(result);
-    res.json({ message: "Filter successful", result });
+    res.json({ message: "Filter successful", result: quotation });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
+
+
+
+
 exports.deleteQuotation = async (req, res) => {
   try {
     const id = req.params.id;
