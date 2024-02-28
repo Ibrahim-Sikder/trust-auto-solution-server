@@ -22,9 +22,9 @@ exports.getRecentQuotation = async (req, res) => {
 exports.createQuotationCard = async (req, res) => {
   try {
     const quotationPost = new Quotation(req.body);
-console.log(quotationPost)
+ 
     const result = await quotationPost.save();
- console.log(result)
+ 
     res.status(200).json({
       message: "Successfully quotation post",
       result,
