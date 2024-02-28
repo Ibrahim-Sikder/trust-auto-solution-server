@@ -8,6 +8,9 @@ const addToJobCardRoute = require("./src/Routes/AddToJobCardRoute")
 const quotationRoute = require("./src/Routes/QuotationRoute")
 const invoiceRoute = require("./src/Routes/InvoiceRoute")
 const moneyReceiptRoute = require("./src/Routes/MoneyReceipt")
+const customerRoute = require("./src/Routes/CustomerRoute")
+const companyRoute = require("./src/Routes/CompanyRoute")
+const showRoomRoute = require("./src/Routes/ShowRoomRoute")
 
 // middleware
 app.use(cors());
@@ -19,6 +22,9 @@ app.use("/api/v1", addToJobCardRoute);
 app.use("/api/v1", quotationRoute);
 app.use("/api/v1", invoiceRoute);
 app.use("/api/v1", moneyReceiptRoute);
+app.use("/api/v1", customerRoute);
+app.use("/api/v1", companyRoute);
+app.use("/api/v1", showRoomRoute);
 
 app.get("/", (req, res) => {
   res.send("Trust Auto Solution");
