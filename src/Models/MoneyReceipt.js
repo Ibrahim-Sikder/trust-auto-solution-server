@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const moneyReceiptSchema = new mongoose.Schema(
   {
+    customerId: {
+      type: String,
+      // required: [true, "Username is required."],
+    },
     thanks_from: {
       type: String,
       // required: [true],

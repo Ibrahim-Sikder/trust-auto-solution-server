@@ -116,7 +116,7 @@ exports.filterCard = async (req, res) => {
 exports.getCustomerProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const customer = await Customer.findOne({ _id: id });
+    const customer = await Customer.findOne({ customerId: id });
     res.status(200).json(customer);
   } catch (error) {
     console.error(error);

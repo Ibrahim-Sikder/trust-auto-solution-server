@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const quotationSchema = new mongoose.Schema(
   {
+    customerId: {
+      type: String,
+      // required: [true, "Username is required."],
+    },
     username: {
       type: String || Number,
       // required: [true],

@@ -6,16 +6,16 @@ router
   .route("/jobCard")
   .get(addToCard.getRecentAddToJobCard)
   .post(addToCard.createAddToJobCard);
-router
-  .route("/jobCard/recent")
-  .get(addToCard.getRecentPostAddToJobCard)
-   
+router.route("/jobCard/recent").get(addToCard.getRecentPostAddToJobCard);
 
 router
   .route("/jobCard/all")
   .get(addToCard.getAllAddToJobCard)
   .post(addToCard.filterCard);
-router.route("/jobCard/:id").get(addToCard.getPreviewJobCard);
+router
+  .route("/jobCard/:id")
+  .get(addToCard.getPreviewJobCard)
+  .post(addToCard.getCardWithCustomerId);
 router.route("/jobCard/invoice/:job_no").get(addToCard.getPreviewJobNoCard);
 
 router
