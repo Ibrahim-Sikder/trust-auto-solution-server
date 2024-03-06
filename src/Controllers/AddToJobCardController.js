@@ -196,7 +196,9 @@ exports.getPreviewJobCard = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const jobCard = await AddToJobCard.find({ customerId: id });
+    const jobCard = await AddToJobCard.find({
+      $or: [{ customerId: id }, { companyId: id }],
+    });
 
     if (jobCard.length === 0) {
       return res.json({
@@ -206,13 +208,14 @@ exports.getCardWithCustomerId = async (req, res) => {
 
     res.status(200).json({
       message: "success",
-      jobCard
+      jobCard,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 exports.getPreviewJobNoCard = async (req, res) => {
   try {
     const job_no = req.params.job_no;

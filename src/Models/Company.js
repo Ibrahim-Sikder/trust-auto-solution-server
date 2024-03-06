@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const companySchema = new mongoose.Schema(
   {
-    customerId: {
+    companyId: {
       type: String,
       // required: [true, "Username is required."],
     },

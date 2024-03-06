@@ -1,6 +1,5 @@
 const Invoice = require("../Models/InvoiceModel");
 
-
 exports.getRecentInvoiceCard = async (req, res) => {
   try {
     const recentInvoice = await Invoice.find({})
@@ -21,7 +20,6 @@ exports.getRecentInvoiceCard = async (req, res) => {
 };
 exports.createInvoiceCard = async (req, res) => {
   try {
-    
     const invoicePost = new Invoice(req.body);
 
     const result = await invoicePost.save();
@@ -42,7 +40,7 @@ exports.getPreviewInvoice = async (req, res) => {
     console.log(id);
     const invoice = await Invoice.findOne({ _id: id });
     console.log(invoice);
-    
+
     res.status(200).json(invoice);
   } catch (error) {
     console.error(error);
@@ -53,7 +51,9 @@ exports.getPreviewInvoice = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const jobCard = await Invoice.find({ customerId: id });
+    const jobCard = await Invoice.find({
+      $or: [{ customerId: id }, { companyId: id }],
+    });
 
     if (jobCard.length === 0) {
       return res.json({
@@ -63,15 +63,13 @@ exports.getCardWithCustomerId = async (req, res) => {
 
     res.status(200).json({
       message: "success",
-      jobCard
+      jobCard,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
 
 exports.getAllInvoice = async (req, res) => {
   try {
@@ -111,10 +109,9 @@ exports.filterCard = async (req, res) => {
     } else {
       // Exact match for numeric fields
       quotation = await Invoice.find({
-        $or: [
-          { job_no: filterType },
-          { contact_number: filterType },
-        ].filter(Boolean),
+        $or: [{ job_no: filterType }, { contact_number: filterType }].filter(
+          Boolean
+        ),
       });
     }
 
@@ -128,9 +125,6 @@ exports.filterCard = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
 
 // exports.filterCard = async (req, res) => {
 //   try {
@@ -233,7 +227,7 @@ exports.updateByIndex = async (req, res) => {
       { $pull: { input_data: { $eq: getInvoice.input_data[index] } } },
       { runValidators: true }
     );
- 
+
     res.status(200).json({ message: "Deleted successful" });
   } catch (error) {
     console.log(error);

@@ -54,7 +54,8 @@ exports.getPreviewQuotation = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const jobCard = await Quotation.find({ customerId: id });
+    const jobCard = await Quotation.find({ $or: [{ customerId: id }, { companyId: id }] });
+
 
     if (jobCard.length === 0) {
       return res.json({

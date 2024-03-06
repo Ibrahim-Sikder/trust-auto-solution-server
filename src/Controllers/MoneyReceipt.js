@@ -138,7 +138,8 @@ exports.getSpecificMoneyReceipt = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const card = await MoneyReceipt.find({ customerId: id });
+    const card = await MoneyReceipt.find({ $or: [{ customerId: id }, { companyId: id }] });
+
 
     if (card.length === 0) {
       return res.json({
