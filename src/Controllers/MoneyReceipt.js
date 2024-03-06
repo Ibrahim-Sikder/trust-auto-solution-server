@@ -134,6 +134,28 @@ exports.getSpecificMoneyReceipt = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+exports.getCardWithCustomerId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const card = await MoneyReceipt.find({ customerId: id });
+
+    if (card.length === 0) {
+      return res.json({
+        message: "No job card found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "success",
+      card
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.updateMoneyReceipt = async (req, res) => {
   try {
     const id = req.params.id;

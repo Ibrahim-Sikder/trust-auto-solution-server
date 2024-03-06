@@ -42,18 +42,37 @@ exports.getPreviewInvoice = async (req, res) => {
     console.log(id);
     const invoice = await Invoice.findOne({ _id: id });
     console.log(invoice);
-    // if (Invoice.length === 0) {
-    //   return res.json({
-    //     message: "No Invoice card found.",
-    //   });
-    // }
-
+    
     res.status(200).json(invoice);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+exports.getCardWithCustomerId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const jobCard = await Invoice.find({ customerId: id });
+
+    if (jobCard.length === 0) {
+      return res.json({
+        message: "No job card found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "success",
+      jobCard
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
 exports.getAllInvoice = async (req, res) => {
   try {
     // const username = req.params.username;
