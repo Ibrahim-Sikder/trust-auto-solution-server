@@ -4,7 +4,12 @@ const invoiceSchema = new mongoose.Schema(
   {
     customerId: {
       type: String,
-      // required: [true, "Username is required."],
+    },
+    companyId: {
+      type: String,
+    },
+    showRoomId: {
+      type: String,
     },
     username: {
       type: String || Number,
@@ -70,8 +75,7 @@ const invoiceSchema = new mongoose.Schema(
     // ],
     input_data: [
       {
-        
-        description:String,
+        description: String,
         quantity: Number,
         rate: Number,
         total: Number,

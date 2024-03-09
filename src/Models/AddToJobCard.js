@@ -5,7 +5,15 @@ const addToJobCardSchema = new mongoose.Schema(
     
     customerId: {
       type: String,
-      required: [true, "customerId is required."],
+       
+    },
+    companyId: {
+      type: String,
+      
+    },
+    showRoomId: {
+      type: String,
+      
     },
     job_no: {
       type: Number,
