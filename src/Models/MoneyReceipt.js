@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 
 const moneyReceiptSchema = new mongoose.Schema(
   {
+    customerId: {
+      type: String,
+    },
+    companyId: {
+      type: String,
+    },
+    showRoomId: {
+      type: String,
+    },
     thanks_from: {
       type: String,
       // required: [true],
@@ -44,13 +53,11 @@ const moneyReceiptSchema = new mongoose.Schema(
       type: Number,
       // required: [true ],
     },
-     
-     
+
     taka_in_word: {
       type: String,
       // required: [true ],
     },
-     
   },
   {
     timestamps: true,

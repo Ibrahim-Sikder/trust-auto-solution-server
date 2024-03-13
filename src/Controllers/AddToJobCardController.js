@@ -9,7 +9,7 @@ exports.createAddToJobCard = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.send("Internal server error");
   }
 };
@@ -36,7 +36,7 @@ exports.updateCard = async (req, res) => {
 exports.getAllAddToJobCard = async (req, res) => {
   try {
     // const username = req.params.username;
-    const allJobCard = await AddToJobCard.find({ }).sort({
+    const allJobCard = await AddToJobCard.find({}).sort({
       createdAt: -1,
     });
     if (allJobCard.length === 0) {
@@ -72,10 +72,7 @@ exports.filterCard = async (req, res) => {
     } else {
       // Exact match for numeric fields
       quotation = await AddToJobCard.find({
-        $or: [
-          { job_no: filterValue },
-          { contact_number: filterValue },
-        ],
+        $or: [{ job_no: filterValue }, { contact_number: filterValue }],
       });
     }
 
@@ -183,7 +180,7 @@ exports.getPreviewJobCard = async (req, res) => {
   try {
     const id = req.params.id;
     const jobCard = await AddToJobCard.findOne({ _id: id });
-  
+
     // if (jobCard.length === 0) {
     //   return res.json({
     //     message: "No job card found.",
@@ -196,11 +193,34 @@ exports.getPreviewJobCard = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+exports.getCardWithCustomerId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const jobCard = await AddToJobCard.find({
+      $or: [{ customerId: id }, { companyId: id }],
+    });
+
+    if (jobCard.length === 0) {
+      return res.json({
+        message: "No job card found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "success",
+      jobCard,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.getPreviewJobNoCard = async (req, res) => {
   try {
     const job_no = req.params.job_no;
-    const jobCard = await AddToJobCard.findOne({job_no });
-  
+    const jobCard = await AddToJobCard.findOne({ job_no });
+
     // if (jobCard.length === 0) {
     //   return res.json({
     //     message: "No job card found.",

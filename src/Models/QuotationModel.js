@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 
 const quotationSchema = new mongoose.Schema(
   {
+    customerId: {
+      type: String,
+    },
+    companyId: {
+      type: String,
+    },
+    showRoomId: {
+      type: String,
+    },
     username: {
       type: String || Number,
       // required: [true],

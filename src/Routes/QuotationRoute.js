@@ -14,6 +14,7 @@ router
 router
   .route("/quotation/:id")
   .get(quotation.getPreviewQuotation)
+  .post(quotation.getCardWithCustomerId)
   .put(quotation.updateByIndex);
 
 router

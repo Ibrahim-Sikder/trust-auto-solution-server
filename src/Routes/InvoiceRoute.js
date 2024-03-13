@@ -14,6 +14,7 @@ router
 router
   .route("/invoice/:id")
   .get(invoice.getPreviewInvoice)
+  .post(invoice.getCardWithCustomerId)
   .put(invoice.updateByIndex);
 
 router

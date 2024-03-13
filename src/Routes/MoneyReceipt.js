@@ -14,8 +14,9 @@ router
 
 router
   .route("/money_receipt/:id")
-  .delete(moneyReceipt.deleteMoneyReceipt)
   .get(moneyReceipt.getSpecificMoneyReceipt)
+  .post(moneyReceipt.getCardWithCustomerId)
+  .delete(moneyReceipt.deleteMoneyReceipt)
   .put(moneyReceipt.updateMoneyReceipt)
 
 module.exports = router;

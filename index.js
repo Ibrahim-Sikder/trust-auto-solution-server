@@ -11,6 +11,7 @@ const moneyReceiptRoute = require("./src/Routes/MoneyReceipt")
 const customerRoute = require("./src/Routes/CustomerRoute")
 const companyRoute = require("./src/Routes/CompanyRoute")
 const showRoomRoute = require("./src/Routes/ShowRoomRoute")
+const vehicleRoute = require("./src/Routes/VehicleListRoute")
 
 // middleware
 app.use(cors());
@@ -25,6 +26,7 @@ app.use("/api/v1", moneyReceiptRoute);
 app.use("/api/v1", customerRoute);
 app.use("/api/v1", companyRoute);
 app.use("/api/v1", showRoomRoute);
+app.use("/api/v1", vehicleRoute);
 
 app.get("/", (req, res) => {
   res.send("Trust Auto Solution");
