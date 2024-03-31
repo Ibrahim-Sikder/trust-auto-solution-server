@@ -116,7 +116,7 @@ exports.filterCard = async (req, res) => {
 exports.getCompanyProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const company = await Company.findOne({ _id: id });
+    const company = await Company.findOne({ companyId: id });
     res.status(200).json(company);
   } catch (error) {
     console.error(error);

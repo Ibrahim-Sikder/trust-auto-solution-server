@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const showRoomSchema = new mongoose.Schema(
   {
+    showRoomId: {
+      type: String,
+      // required: [true, "Username is required."],
+    },
     // Customer Information
 
     showRoom_name: {
