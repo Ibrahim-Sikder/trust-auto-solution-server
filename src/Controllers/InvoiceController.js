@@ -217,12 +217,13 @@ exports.updateInvoice = async (req, res) => {
     res.send("Internal server error");
   }
 };
+
 exports.updateByIndex = async (req, res) => {
   try {
     const id = req.params.id;
     const { index } = req.body;
     const getInvoice = await Invoice.findOne({ _id: id });
-    const updateQuotation = await Invoice.updateOne(
+    const updateInvoice = await Invoice.updateOne(
       { _id: id },
       { $pull: { input_data: { $eq: getInvoice.input_data[index] } } },
       { runValidators: true }
