@@ -3,7 +3,9 @@ const app = express();
 const cors = require("cors");
 const dbConnect = require("./src/utils/dbConnect");
 require("dotenv").config();
+
 const port = process.env.PORT || 5000;
+
 const addToJobCardRoute = require("./src/Routes/AddToJobCardRoute");
 const quotationRoute = require("./src/Routes/QuotationRoute");
 const invoiceRoute = require("./src/Routes/InvoiceRoute");
@@ -18,10 +20,10 @@ const multer = require("multer");
 
 const cloudinary = require("./src/utils/cloudinary");
 
-const streamifier = require("streamifier"); // Import the streamifier library
+// const streamifier = require("streamifier"); // Import the streamifier library
 
-const path = require("path");
-const fs = require("fs");
+// const path = require("path");
+// const fs = require("fs");
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -37,20 +39,13 @@ app.use("/api/v1", showRoomRoute);
 app.use("/api/v1", vehicleRoute);
 app.use("/api/v1", supplierRoute);
 
-// cloudinary.config({
-//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-//   api_key: process.env.CLOUDINARY_API_KEY,
-//   api_secret: process.env.CLOUDINARY_SECRET_KEY,
-// });
-
+ 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
- 
 
 app.post("/api/v1/uploads", upload.single("image"), async (req, res) => {
   try {
-    // Check if there was an error during file upload
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
@@ -79,6 +74,8 @@ app.post("/api/v1/uploads", upload.single("image"), async (req, res) => {
     res.status(500).json({ error: "An unexpected error occurred." });
   }
 });
+
+
 
 app.get("/", (req, res) => {
   res.send("Trust Auto Solution");
