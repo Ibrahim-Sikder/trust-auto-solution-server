@@ -15,15 +15,13 @@ const companyRoute = require("./src/Routes/CompanyRoute");
 const showRoomRoute = require("./src/Routes/ShowRoomRoute");
 const vehicleRoute = require("./src/Routes/VehicleListRoute");
 const supplierRoute = require("./src/Routes/SupplierRoute");
+const employeeRoute = require("./src/Routes/EmployeeRoute");
 
 const multer = require("multer");
 
 const cloudinary = require("./src/utils/cloudinary");
 
-// const streamifier = require("streamifier"); // Import the streamifier library
-
-// const path = require("path");
-// const fs = require("fs");
+ 
 // middleware
 app.use(cors());
 app.use(express.json());
@@ -38,6 +36,7 @@ app.use("/api/v1", companyRoute);
 app.use("/api/v1", showRoomRoute);
 app.use("/api/v1", vehicleRoute);
 app.use("/api/v1", supplierRoute);
+app.use("/api/v1", employeeRoute);
 
  
 const storage = multer.memoryStorage();
@@ -53,20 +52,18 @@ app.post("/api/v1/uploads", upload.single("image"), async (req, res) => {
     // Create a Buffer from the file buffer
     const fileBuffer = Buffer.from(req.file.buffer);
 
-    // Upload image directly to Cloudinary using the file buffer
     cloudinary.uploader
       .upload_stream(
         { resource_type: "auto", folder: "image_file" },
         (error, result) => {
           if (error) {
             return res.status(500).json({
-              error: "An error occurred while uploading to Cloudinary.",
+              error: "An error occurred while uploading.",
             });
           }
 
-          // Do something with the Cloudinary result (e.g., save the URL to a database)
           const image_url = result.secure_url;
-          res.json({ message: "Image uploaded successfully", image_url });
+          res.json({ message: "Image uploaded successful", image_url });
         }
       )
       .end(fileBuffer); // Pass the file buffer to the upload stream
