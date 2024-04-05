@@ -1,23 +1,6 @@
 const Employee = require("../Models/EmployeeModel");
 
-// exports.getRecentEmployee = async (req, res) => {
-//   try {
-//     const recentEmployee = await Employee.find({})
-//       .sort({ createdAt: -1 })
-//       .limit(1);
-
-//     if (recentEmployee.length === 0) {
-//       return res.json({
-//         message: "No recent employee found.",
-//       });
-//     }
-
-//     res.json(recentEmployee[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+ 
 exports.createEmployee = async (req, res) => {
   try {
     const employeePost = new Employee(req.body);
@@ -51,42 +34,77 @@ exports.getAllEmployee = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-// exports.getPreviewInvoice = async (req, res) => {
+
+// exports.updateEmployee = async (req, res) => {
+//   const { id } = req.params;
+//   const attendanceData = req.body;
+
 //   try {
-//     const id = req.params.id;
-//     console.log(id);
-//     const invoice = await Invoice.findOne({ _id: id });
-//     console.log(invoice);
-
-//     res.status(200).json(invoice);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
-// exports.getCardWithCustomerId = async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const jobCard = await Invoice.find({
-//       $or: [{ customerId: id }, { companyId: id }],
-//     });
-
-//     if (jobCard.length === 0) {
-//       return res.json({
-//         message: "No job card found.",
-//       });
+//     // Check if the employee with the given _id exists
+//     const employee = await Employee.findById(id);
+//     if (!employee) {
+//       return res.status(404).json({ message: "Employee not found" });
 //     }
 
-//     res.status(200).json({
-//       message: "success",
-//       jobCard,
-//     });
+//     // Ensure attendanceData is an array
+//     if (!Array.isArray(attendanceData)) {
+//       attendanceData = [attendanceData];
+//     }
+
+//     // Filter out the attendance data that matches the employee's _id
+//     const filteredAttendanceData = attendanceData.filter(
+//       data => data._id === id
+//     );
+
+//     // Update the employee document with the filtered attendance data
+//     const updatedEmployee = await Employee.updateOne(
+//       { _id: id }, // Match the employee ID
+//       { $addToSet: { attendance: { $each: filteredAttendanceData } } }, // Push each attendance record in filteredAttendanceData to the matching attendance array
+//       { new: true }
+//     );
+
+//     console.log("updatedEmployee", updatedEmployee);
+//     res.json(updatedEmployee);
 //   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
+//     console.log(error);
+//     res.status(400).json({ message: error.message });
 //   }
 // };
+
+// exports.updateEmployee = async (req, res) => {
+//   const { id } = req.params;
+//   const attendanceData = req.body;
+
+//   try {
+//     // Extract the _id values from filteredAttendanceData
+//     const attendanceIds = attendanceData.map((entry) => entry._id);
+
+//     // Update the employee documents with the new attendance data
+
+//     const filteredAttendanceData = attendanceData.filter(
+//             data => data._id === id
+//           );
+
+//           console.log(filteredAttendanceData)
+//     const updatedEmployee = await Employee.updateMany(
+//       // {
+//       //   $and: [
+//       //     { _id: id }, // Match employee by _id
+//           { _id: { $in: attendanceIds } }, // Match attendance _ids
+//       //   ],
+//       // }, // Match attendance _ids
+//       { $addToSet: { attendance: filteredAttendanceData } }, // Use $push to add data to array
+//       { runValidators: true } // Ensure validators are run
+//     );
+
+//     console.log("Number of documents updated:", updatedEmployee);
+//     res.json({ message: "Attendance data added successfully" });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+
 
 exports.filterCard = async (req, res) => {
   try {
@@ -94,30 +112,30 @@ exports.filterCard = async (req, res) => {
 
     const isNumeric = !isNaN(Number(filterType));
 
-    let supplier;
+    let employee;
 
     if (!isNumeric) {
       // Case-insensitive partial string matching for string fields
-      supplier = await Employee.find({
+      employee = await Employee.find({
         $or: [
+          { employeeId: { $regex: filterType, $options: "i" } },
           { full_name: { $regex: filterType, $options: "i" } },
+          { designation: { $regex: filterType, $options: "i" } },
           { email: { $regex: filterType, $options: "i" } },
         ].filter(Boolean),
       });
     } else {
       // Exact match for numeric fields
-      supplier = await Employee.find({
-        $or: [{ job_no: filterType }, { phone_number: filterType }].filter(
-          Boolean
-        ),
+      employee = await Employee.find({
+        $or: [{ phone_number: filterType }].filter(Boolean),
       });
     }
 
-    if (!supplier || supplier.length === 0) {
+    if (!employee || employee.length === 0) {
       return res.json({ message: "No matching found", result: [] });
     }
 
-    res.json({ message: "Filter successful", result: supplier });
+    res.json({ message: "Filter successful", result: employee });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

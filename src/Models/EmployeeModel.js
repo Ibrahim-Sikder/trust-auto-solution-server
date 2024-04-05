@@ -4,7 +4,6 @@ const employeeSchema = new mongoose.Schema(
   {
     employeeId: {
       type: String,
-      
     },
     full_name: {
       type: String,
@@ -85,6 +84,18 @@ const employeeSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+
+    attendance: [
+      {
+        date: String,
+        present: Boolean,
+        absent: Boolean,
+        in_time: String,
+        out_time: String,
+        overtime: Number,
+        late_status: Boolean,
+      },
+    ],
   },
   {
     timestamps: true,
