@@ -16,6 +16,7 @@ const showRoomRoute = require("./src/Routes/ShowRoomRoute");
 const vehicleRoute = require("./src/Routes/VehicleListRoute");
 const supplierRoute = require("./src/Routes/SupplierRoute");
 const employeeRoute = require("./src/Routes/EmployeeRoute");
+const expenseRoute = require("./src/Routes/ExpenseRoute");
 
 const multer = require("multer");
 
@@ -37,6 +38,7 @@ app.use("/api/v1", showRoomRoute);
 app.use("/api/v1", vehicleRoute);
 app.use("/api/v1", supplierRoute);
 app.use("/api/v1", employeeRoute);
+app.use("/api/v1", expenseRoute);
 
  
 const storage = multer.memoryStorage();

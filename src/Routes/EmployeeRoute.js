@@ -6,11 +6,11 @@ router
   .route("/employee")
   .get(employee.getAllEmployee)
   .post(employee.createEmployee);
-  //   .get(employee.getRecentEmployee)
+//   .get(employee.getRecentEmployee)
 
 router
   .route("/employee/all")
-
+  // .put(employee.updateEmployee)
   .post(employee.filterCard);
 
 router
