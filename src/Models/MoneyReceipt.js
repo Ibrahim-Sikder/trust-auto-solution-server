@@ -2,15 +2,10 @@ const mongoose = require("mongoose");
 
 const moneyReceiptSchema = new mongoose.Schema(
   {
-    customerId: {
+    Id: {
       type: String,
     },
-    companyId: {
-      type: String,
-    },
-    showRoomId: {
-      type: String,
-    },
+
     thanks_from: {
       type: String,
       // required: [true],

@@ -9,12 +9,10 @@ exports.createShowRoomDetails = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.send("Internal server error");
   }
 };
-
-
 
 exports.getShowRoom = async (req, res) => {
   try {
@@ -33,13 +31,9 @@ exports.getShowRoom = async (req, res) => {
   }
 };
 
-
-
- 
 exports.filterCard = async (req, res) => {
   try {
     const { filterType } = req.body;
-   
 
     const isNumeric = !isNaN(Number(filterType));
     const filterValue = isNumeric ? Number(filterType) : filterType;
@@ -58,10 +52,7 @@ exports.filterCard = async (req, res) => {
     } else {
       // Exact match for numeric fields
       showRoom = await ShowRoomList.find({
-        $or: [
-          { job_no: filterValue },
-          { company_contact: filterValue },
-        ],
+        $or: [{ job_no: filterValue }, { company_contact: filterValue }],
       });
     }
 
@@ -75,7 +66,6 @@ exports.filterCard = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
- 
 
 // exports.getRecentPostAddToJobCard = async (req, res) => {
 //   try {
@@ -127,7 +117,7 @@ exports.getShowRoomProfile = async (req, res) => {
 //   try {
 //     const job_no = req.params.job_no;
 //     const jobCard = await ShowRoomList.findOne({job_no });
-  
+
 //     // if (jobCard.length === 0) {
 //     //   return res.json({
 //     //     message: "No job card found.",
@@ -143,7 +133,7 @@ exports.getShowRoomProfile = async (req, res) => {
 exports.getSpecificCard = async (req, res) => {
   try {
     const id = req.params.id;
- 
+
     const showRoom = await ShowRoomList.findOne({ _id: id });
     res.status(200).json(showRoom);
   } catch (error) {

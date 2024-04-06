@@ -196,9 +196,7 @@ exports.getPreviewJobCard = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const jobCard = await AddToJobCard.find({
-      $or: [{ customerId: id }, { companyId: id }],
-    });
+    const jobCard = await AddToJobCard.find({Id : id});
 
     if (jobCard.length === 0) {
       return res.json({

@@ -69,7 +69,7 @@ exports.createMoneyReceipt = async (req, res) => {
 //     res.status(500).json({ error: "Internal Server Error" });
 //   }
 // };
- 
+
 exports.filterCard = async (req, res) => {
   try {
     const { filterType } = req.body;
@@ -107,12 +107,9 @@ exports.filterCard = async (req, res) => {
 
     res.json({ message: "Filter successful", result: moneyReceipt });
   } catch (error) {
-   
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
 
 exports.deleteMoneyReceipt = async (req, res) => {
   try {
@@ -138,8 +135,7 @@ exports.getSpecificMoneyReceipt = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const card = await MoneyReceipt.find({ $or: [{ customerId: id }, { companyId: id }] });
-
+    const card = await MoneyReceipt.find({ Id: id });
 
     if (card.length === 0) {
       return res.json({
@@ -149,7 +145,7 @@ exports.getCardWithCustomerId = async (req, res) => {
 
     res.status(200).json({
       message: "success",
-      card
+      card,
     });
   } catch (error) {
     console.error(error);
