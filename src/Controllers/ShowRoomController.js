@@ -106,7 +106,9 @@ exports.filterCard = async (req, res) => {
 exports.getShowRoomProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const showRoom = await ShowRoomList.findOne({ _id: id });
+
+    const showRoom = await ShowRoomList.findOne({ showRoomId: id });
+
     res.status(200).json(showRoom);
   } catch (error) {
     console.error(error);
