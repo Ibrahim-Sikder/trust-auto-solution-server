@@ -51,9 +51,7 @@ exports.getPreviewInvoice = async (req, res) => {
 exports.getCardWithCustomerId = async (req, res) => {
   try {
     const id = req.params.id;
-    const jobCard = await Invoice.find({
-      $or: [{ customerId: id }, { companyId: id }],
-    });
+    const jobCard = await Invoice.find({ Id: id });
 
     if (jobCard.length === 0) {
       return res.json({
