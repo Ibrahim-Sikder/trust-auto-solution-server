@@ -88,6 +88,10 @@ const employeeSchema = new mongoose.Schema(
     attendance: [
       {
         date: String,
+        full_name: String,
+        employeeId: String,
+        status: String,
+        designation: String,
         present: Boolean,
         absent: Boolean,
         in_time: String,
