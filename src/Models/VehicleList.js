@@ -1,47 +1,16 @@
 const mongoose = require("mongoose");
 
-const companySchema = new mongoose.Schema(
+const vehicleSchema = new mongoose.Schema(
   {
+    customerId: {
+      type: String,
+      // required: [true, "Username is required."],
+    },
     companyId: {
       type: String,
-      // required: [true, "Username is required."],
     },
-    // Customer Information
-
-    company_name: {
+    showRoomId: {
       type: String,
-      // required: [true, "Company name is required."],
-    },
-    username: {
-      type: String,
-      // required: [true, "Username is required."],
-    },
-    company_address: {
-      type: String,
-      // required: [true, "Company address is required."],
-    },
-    
-    company_contact: {
-      type: Number,
-      // required: [true, "Customer contact is required."],
-      min: [11, "Phone number must be 11 character!"],
-    },
-    company_email: {
-      type: String,
-      // required: [true, "Customer email is required."],
-    },
-     
-    driver_name: {
-      type: String,
-      // required: [true, "Driver name is required."],
-    },
-    driver_contact: {
-      type: Number,
-      min: [11, "Phone number must be 11 character!"],
-    },
-    reference_name: {
-      type: String,
-      // required: [true, "Reference name is required."],
     },
 
     // Vehicle Information
@@ -97,6 +66,6 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-const CompanyList = mongoose.model("CompanyList", companySchema);
+const VehicleList = mongoose.model("VehicleList", vehicleSchema);
 
-module.exports = CompanyList;
+module.exports = VehicleList;

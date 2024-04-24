@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const invoiceSchema = new mongoose.Schema(
   {
+    Id: {
+      type: String,
+    },
+
     username: {
       type: String || Number,
-      // required: [true],
-    },
-    id: {
-      type: String,
       // required: [true],
     },
     job_no: {
@@ -17,20 +17,42 @@ const invoiceSchema = new mongoose.Schema(
       type: String,
       // required: [true ],
     },
-
-    car_registration_no: {
-      type: String || Number,
-      // required: [true ],
+    company_name: {
+      type: String,
+      // required: [true, "Company name is required."],
     },
 
     customer_name: {
       type: String,
+      // required: [true, "Customer name is required."],
+    },
+    customer_contact: {
+      type: Number,
+      // required: [true, "Customer contact is required."],
+      min: [11, "Phone number must be 11 character!"],
+    },
+    customer_address: {
+      type: String,
+      // required: [true, "Customer address is required."],
+    },
+
+    car_registration_no: {
+      type: String,
       // required: [true ],
     },
 
-    contact_number: {
-      type: Number,
-      // required: [true ],
+    chassis_no: {
+      type: String || Number,
+      // required: [true, "Chassis number is required."],
+    },
+    engine_no: {
+      type: String || Number,
+      // required: [true, "Chassis number is required."],
+    },
+
+    vehicle_name: {
+      type: String,
+      // required: [true, "Vehicle name is required."],
     },
     mileage: {
       type: Number,
@@ -66,8 +88,7 @@ const invoiceSchema = new mongoose.Schema(
     // ],
     input_data: [
       {
-        
-        description:String,
+        description: String,
         quantity: Number,
         rate: Number,
         total: Number,
@@ -89,6 +110,12 @@ const invoiceSchema = new mongoose.Schema(
     net_total: {
       type: Number,
       // required: [true ],
+    },
+    advance: {
+      type: Number,
+    },
+    due: {
+      type: Number,
     },
   },
   {

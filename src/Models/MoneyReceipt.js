@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const moneyReceiptSchema = new mongoose.Schema(
   {
+    Id: {
+      type: String,
+    },
+
     thanks_from: {
       type: String,
       // required: [true],
@@ -44,13 +48,11 @@ const moneyReceiptSchema = new mongoose.Schema(
       type: Number,
       // required: [true ],
     },
-     
-     
+
     taka_in_word: {
       type: String,
       // required: [true ],
     },
-     
   },
   {
     timestamps: true,

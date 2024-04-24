@@ -1,6 +1,5 @@
 const Invoice = require("../Models/InvoiceModel");
 
-
 exports.getRecentInvoiceCard = async (req, res) => {
   try {
     const recentInvoice = await Invoice.find({})
@@ -21,7 +20,6 @@ exports.getRecentInvoiceCard = async (req, res) => {
 };
 exports.createInvoiceCard = async (req, res) => {
   try {
-    
     const invoicePost = new Invoice(req.body);
 
     const result = await invoicePost.save();
@@ -42,11 +40,6 @@ exports.getPreviewInvoice = async (req, res) => {
     console.log(id);
     const invoice = await Invoice.findOne({ _id: id });
     console.log(invoice);
-    // if (Invoice.length === 0) {
-    //   return res.json({
-    //     message: "No Invoice card found.",
-    //   });
-    // }
 
     res.status(200).json(invoice);
   } catch (error) {
@@ -54,6 +47,28 @@ exports.getPreviewInvoice = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+exports.getCardWithCustomerId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const jobCard = await Invoice.find({ Id: id });
+
+    if (jobCard.length === 0) {
+      return res.json({
+        message: "No job card found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "success",
+      jobCard,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.getAllInvoice = async (req, res) => {
   try {
     // const username = req.params.username;
@@ -92,10 +107,9 @@ exports.filterCard = async (req, res) => {
     } else {
       // Exact match for numeric fields
       quotation = await Invoice.find({
-        $or: [
-          { job_no: filterType },
-          { contact_number: filterType },
-        ].filter(Boolean),
+        $or: [{ job_no: filterType }, { contact_number: filterType }].filter(
+          Boolean
+        ),
       });
     }
 
@@ -109,9 +123,6 @@ exports.filterCard = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-
 
 // exports.filterCard = async (req, res) => {
 //   try {
@@ -204,17 +215,18 @@ exports.updateInvoice = async (req, res) => {
     res.send("Internal server error");
   }
 };
+
 exports.updateByIndex = async (req, res) => {
   try {
     const id = req.params.id;
     const { index } = req.body;
     const getInvoice = await Invoice.findOne({ _id: id });
-    const updateQuotation = await Invoice.updateOne(
+    const updateInvoice = await Invoice.updateOne(
       { _id: id },
       { $pull: { input_data: { $eq: getInvoice.input_data[index] } } },
       { runValidators: true }
     );
- 
+
     res.status(200).json({ message: "Deleted successful" });
   } catch (error) {
     console.log(error);

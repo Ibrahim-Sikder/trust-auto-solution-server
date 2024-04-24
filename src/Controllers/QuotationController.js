@@ -41,11 +41,7 @@ exports.getPreviewQuotation = async (req, res) => {
     // console.log(job_no);
     const quotation = await Quotation.findOne({ _id: id });
 
-    // if (quotation.length === 0) {
-    //   return res.json({
-    //     message: "No quotation card found.",
-    //   });
-    // }
+    
 
     res.status(200).json(quotation);
   } catch (error) {
@@ -53,6 +49,30 @@ exports.getPreviewQuotation = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+exports.getCardWithCustomerId = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const jobCard = await Quotation.find({ Id :id});
+
+
+    if (jobCard.length === 0) {
+      return res.json({
+        message: "No job card found.",
+      });
+    }
+
+    res.status(200).json({
+      message: "success",
+      jobCard
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 exports.getAllQuotation = async (req, res) => {
   try {
     // const username = req.params.username;

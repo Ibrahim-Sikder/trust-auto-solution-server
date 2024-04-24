@@ -1,24 +1,22 @@
-const Customer = require("../Models/Customer");
+const Vehicle = require("../Models/VehicleList");
 
-exports.createCustomerDetails = async (req, res) => {
+exports.createVehicleDetails = async (req, res) => {
   try {
-    const customerCreated = new Customer(req.body);
-    const result = await customerCreated.save();
+    const vehicleCreated = new Vehicle(req.body);
+    const result = await vehicleCreated.save();
     res.status(200).json({
-      message: "Successfully add to customer post",
+      message: "Successfully add to vehicle post",
       result,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.send("Internal server error");
   }
 };
 
-
-
-exports.getCustomerData = async (req, res) => {
+exports.getVehicleData = async (req, res) => {
   try {
-    const allPost = await Customer.find({}).sort({
+    const allPost = await Vehicle.find({}).sort({
       createdAt: -1,
     });
     if (allPost.length === 0) {
@@ -33,9 +31,6 @@ exports.getCustomerData = async (req, res) => {
   }
 };
 
-
-
- 
 exports.filterCard = async (req, res) => {
   try {
     const { filterType } = req.body;
@@ -48,7 +43,7 @@ exports.filterCard = async (req, res) => {
 
     if (!isNumeric) {
       // Case-insensitive partial string matching for string fields
-      customer = await Customer.find({
+      customer = await Vehicle.find({
         $or: [
           { customer_name: { $regex: filterType, $options: "i" } },
           { date: { $regex: filterType, $options: "i" } },
@@ -57,11 +52,8 @@ exports.filterCard = async (req, res) => {
       });
     } else {
       // Exact match for numeric fields
-      customer = await Customer.find({
-        $or: [
-          { job_no: filterValue },
-          { customer_contact: filterValue },
-        ],
+      customer = await Vehicle.find({
+        $or: [{ job_no: filterValue }, { customer_contact: filterValue }],
       });
     }
 
@@ -75,76 +67,25 @@ exports.filterCard = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
- 
 
-// exports.getRecentPostAddToJobCard = async (req, res) => {
-//   try {
-//     const recentPostJobCard = await Customer.find({})
-//       .sort({ createdAt: -1 })
-//       .limit(1);
-
-//     if (recentPostJobCard.length === 0) {
-//       return res.json({
-//         message: "No recent job card found.",
-//       });
-//     }
-
-//     res.json(recentPostJobCard[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-// exports.getRecentAddToJobCard = async (req, res) => {
-//   try {
-//     const recentJobCard = await Customer.find({})
-//       .sort({ job_no: -1 })
-//       .limit(1);
-
-//     if (recentJobCard.length === 0) {
-//       return res.json({
-//         message: "No recent job card found.",
-//       });
-//     }
-
-//     res.json(recentJobCard[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-exports.getCustomerProfile = async (req, res) => {
+exports.getVehicleProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const customer = await Customer.findOne({ customerId: id });
-    res.status(200).json(customer);
+    const vehicle = await Vehicle.find({
+      $or: [{ customerId: id }, { companyId: id }],
+    });
+    res.status(200).json(vehicle);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-// exports.getPreviewJobNoCard = async (req, res) => {
-//   try {
-//     const job_no = req.params.job_no;
-//     const jobCard = await Customer.findOne({job_no });
-  
-//     // if (jobCard.length === 0) {
-//     //   return res.json({
-//     //     message: "No job card found.",
-//     //   });
-//     // }
 
-//     res.status(200).json(jobCard);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
 exports.getSpecificCard = async (req, res) => {
   try {
     const id = req.params.id;
- 
-    const customer = await Customer.findOne({ _id: id });
+
+    const customer = await Vehicle.findOne({ _id: id });
     res.status(200).json(customer);
   } catch (error) {
     console.error(error);
@@ -156,7 +97,7 @@ exports.updateCard = async (req, res) => {
   try {
     const id = req.params.id;
     const updateCard = req.body;
-    const updateInfo = await Customer.updateMany(
+    const updateInfo = await Vehicle.updateMany(
       { _id: id },
       {
         $set: updateCard,
@@ -174,7 +115,7 @@ exports.updateCard = async (req, res) => {
 exports.deleteCustomer = async (req, res) => {
   try {
     const id = req.params.id;
-    const customer = await Customer.deleteOne({ _id: id });
+    const customer = await Vehicle.deleteOne({ _id: id });
     res.status(200).json({ message: "Customer card delete successful" });
   } catch (error) {
     console.error(error);
