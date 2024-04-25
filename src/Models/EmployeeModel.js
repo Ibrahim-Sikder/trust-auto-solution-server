@@ -97,7 +97,7 @@ const employeeSchema = new mongoose.Schema(
         in_time: String,
         out_time: String,
         overtime: Number,
-        late_status: Boolean,
+        late_status: { type: Boolean, default: false },
       },
     ],
   },
