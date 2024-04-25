@@ -73,53 +73,7 @@ exports.getAllEmployee = async (req, res) => {
 // find korle object pawya jay
 // filter korle array
 
-// exports.updateEmployee = async (req, res) => {
-//   const attendanceData = req.body;
-//   console.log(req.body);
-
-//   try {
-//     const attendanceIds = attendanceData.map((entry) => entry._id);
-
-//     attendanceIds.forEach(async (id) => {
-//       const data = attendanceData.find((d)=>d._id === id)
-//       const updateEmployee = await Employee.updateOne(
-//         { _id: id },
-//         { $addToSet: { attendance: data } },
-//         { runValidators: true }
-//       );
-
-// console.log(updateEmployee)
-
-//     });
-
-//     // const filteredAttendanceData = attendanceData.find(
-//     //   (data) => data._id === attendanceIds
-//     // );
-
-//     // const filteredAttendanceData = attendanceData.find(
-//     //   (data) => attendanceIds.includes(data._id)
-//     // );
-
-//     // console.log(filteredAttendanceData);
-
-//     // const updatedEmployee = await Employee.updateMany(
-//     //   // {
-//     //   //   $and: [
-//     //   //     { _id: id }, // Match employee by _id
-//     //   { _id: { $in: attendanceIds } }, // Match attendance _ids
-//     //   //   ],
-//     //   // }, // Match attendance _ids
-//     //   { $addToSet: { attendance: filteredAttendanceData } }, // Use $push to add data to array
-//     //   { runValidators: true } // Ensure validators are run
-//     // );
-
-//     // console.log("Number of documents updated:", updatedEmployee);
-//     res.json({ message: "Attendance data added successfully" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(400).json({ message: error.message });
-//   }
-// };
+ 
 exports.updateEmployeeAttendance = async (req, res) => {
   const attendanceData = req.body;
 
@@ -133,11 +87,9 @@ exports.updateEmployeeAttendance = async (req, res) => {
         _id: id,
         "attendance.date": data.date,
       });
-   
+
       if (checkExist) {
         const updateEmployee = await Employee.updateOne(
-          // { _id: id },
-          // { $set: { attendance: data } },
           { _id: id, "attendance.date": data.date },
           { $set: { "attendance.$": data } },
           { runValidators: true }
@@ -146,6 +98,14 @@ exports.updateEmployeeAttendance = async (req, res) => {
         const updateEmployee = await Employee.updateOne(
           { _id: id },
           { $push: { attendance: data } },
+          { runValidators: true }
+        );
+      }
+
+      if (checkExist && data.deleted === "delete") {
+        const updateEmployee = await Employee.updateOne(
+          { _id: id, "attendance.date": data.date },
+          { $pull: { attendance: data } },
           { runValidators: true }
         );
       }
