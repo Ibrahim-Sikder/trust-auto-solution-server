@@ -1,6 +1,5 @@
 const Employee = require("../Models/EmployeeModel");
 
- 
 exports.createEmployee = async (req, res) => {
   try {
     const employeePost = new Employee(req.body);
@@ -71,40 +70,92 @@ exports.getAllEmployee = async (req, res) => {
 //   }
 // };
 
+// find korle object pawya jay
+// filter korle array
+
 // exports.updateEmployee = async (req, res) => {
-//   const { id } = req.params;
 //   const attendanceData = req.body;
+//   console.log(req.body);
 
 //   try {
-//     // Extract the _id values from filteredAttendanceData
 //     const attendanceIds = attendanceData.map((entry) => entry._id);
 
-//     // Update the employee documents with the new attendance data
+//     attendanceIds.forEach(async (id) => {
+//       const data = attendanceData.find((d)=>d._id === id)
+//       const updateEmployee = await Employee.updateOne(
+//         { _id: id },
+//         { $addToSet: { attendance: data } },
+//         { runValidators: true }
+//       );
 
-//     const filteredAttendanceData = attendanceData.filter(
-//             data => data._id === id
-//           );
+// console.log(updateEmployee)
 
-//           console.log(filteredAttendanceData)
-//     const updatedEmployee = await Employee.updateMany(
-//       // {
-//       //   $and: [
-//       //     { _id: id }, // Match employee by _id
-//           { _id: { $in: attendanceIds } }, // Match attendance _ids
-//       //   ],
-//       // }, // Match attendance _ids
-//       { $addToSet: { attendance: filteredAttendanceData } }, // Use $push to add data to array
-//       { runValidators: true } // Ensure validators are run
-//     );
+//     });
 
-//     console.log("Number of documents updated:", updatedEmployee);
+//     // const filteredAttendanceData = attendanceData.find(
+//     //   (data) => data._id === attendanceIds
+//     // );
+
+//     // const filteredAttendanceData = attendanceData.find(
+//     //   (data) => attendanceIds.includes(data._id)
+//     // );
+
+//     // console.log(filteredAttendanceData);
+
+//     // const updatedEmployee = await Employee.updateMany(
+//     //   // {
+//     //   //   $and: [
+//     //   //     { _id: id }, // Match employee by _id
+//     //   { _id: { $in: attendanceIds } }, // Match attendance _ids
+//     //   //   ],
+//     //   // }, // Match attendance _ids
+//     //   { $addToSet: { attendance: filteredAttendanceData } }, // Use $push to add data to array
+//     //   { runValidators: true } // Ensure validators are run
+//     // );
+
+//     // console.log("Number of documents updated:", updatedEmployee);
 //     res.json({ message: "Attendance data added successfully" });
 //   } catch (error) {
 //     console.error("Error:", error);
 //     res.status(400).json({ message: error.message });
 //   }
 // };
+exports.updateEmployeeAttendance = async (req, res) => {
+  const attendanceData = req.body;
 
+  try {
+    const attendanceIds = attendanceData.map((entry) => entry._id);
+
+    attendanceIds.forEach(async (id) => {
+      const data = attendanceData.find((d) => d._id === id);
+
+      const checkExist = await Employee.findOne({
+        _id: id,
+        "attendance.date": data.date,
+      });
+   
+      if (checkExist) {
+        const updateEmployee = await Employee.updateOne(
+          // { _id: id },
+          // { $set: { attendance: data } },
+          { _id: id, "attendance.date": data.date },
+          { $set: { "attendance.$": data } },
+          { runValidators: true }
+        );
+      } else {
+        const updateEmployee = await Employee.updateOne(
+          { _id: id },
+          { $push: { attendance: data } },
+          { runValidators: true }
+        );
+      }
+    });
+    res.status(200).json({ message: "Attendance data added successful" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(400).json({ message: error.message });
+  }
+};
 
 exports.filterCard = async (req, res) => {
   try {
@@ -165,6 +216,7 @@ exports.getSpecificEmployee = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 exports.updateEmployee = async (req, res) => {
   try {
     const id = req.params.id;

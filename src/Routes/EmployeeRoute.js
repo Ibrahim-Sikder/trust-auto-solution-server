@@ -10,7 +10,7 @@ router
 
 router
   .route("/employee/all")
-  // .put(employee.updateEmployee)
+  .put(employee.updateEmployeeAttendance)
   .post(employee.filterCard);
 
 router
