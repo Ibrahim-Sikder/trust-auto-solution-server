@@ -73,7 +73,6 @@ exports.getAllEmployee = async (req, res) => {
 // find korle object pawya jay
 // filter korle array
 
- 
 exports.updateEmployeeAttendance = async (req, res) => {
   const attendanceData = req.body;
 
@@ -108,6 +107,27 @@ exports.updateEmployeeAttendance = async (req, res) => {
           { $pull: { attendance: data } },
           { runValidators: true }
         );
+      }
+
+      if (data.salary === "salary") {
+        const checkExist = await Employee.findOne({
+          _id: id,
+          "salary_details.month_of_salary": data.month_of_salary,
+        });
+
+        if (checkExist) {
+          const updateEmployee = await Employee.updateOne(
+            { _id: id, "salary_details.month_of_salary": data.month_of_salary },
+            { $set: { "salary_details.$": data } },
+            { runValidators: true }
+          );
+        } else {
+          const updateEmployee = await Employee.updateOne(
+            { _id: id },
+            { $push: { salary_details: data } },
+            { runValidators: true }
+          );
+        }
       }
     });
     res.status(200).json({ message: "Attendance data added successful" });
