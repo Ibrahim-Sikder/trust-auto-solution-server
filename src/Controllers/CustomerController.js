@@ -9,7 +9,7 @@ exports.createCustomerDetails = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error)
+   
     res.send("Internal server error");
   }
 };
@@ -39,7 +39,7 @@ exports.getCustomerData = async (req, res) => {
 exports.filterCard = async (req, res) => {
   try {
     const { filterType } = req.body;
-    console.log(filterType);
+     
 
     const isNumeric = !isNaN(Number(filterType));
     const filterValue = isNumeric ? Number(filterType) : filterType;
@@ -167,7 +167,7 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-    console.log(error);
+     
     res.send("Internal server error");
   }
 };

@@ -30,7 +30,7 @@ exports.createQuotationCard = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error);
+    
     res.send("Internal server error");
   }
 };
@@ -224,7 +224,7 @@ exports.updateQuotation = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-    console.log(error);
+     
     res.send("Internal server error");
   }
 };
@@ -242,7 +242,7 @@ exports.updateByIndex = async (req, res) => {
  
     res.status(200).json({ message: "Deleted successful" });
   } catch (error) {
-    console.log(error);
+   
     res.status(500).json({ error: "Internal server error" });
   }
 };

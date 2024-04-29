@@ -29,7 +29,7 @@ exports.createMoneyReceipt = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error);
+     
     res.send("Internal server error");
   }
 };
