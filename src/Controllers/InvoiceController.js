@@ -29,7 +29,7 @@ exports.createInvoiceCard = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error);
+   
     res.send("Internal server error");
   }
 };
@@ -37,9 +37,9 @@ exports.createInvoiceCard = async (req, res) => {
 exports.getPreviewInvoice = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
+    
     const invoice = await Invoice.findOne({ _id: id });
-    console.log(invoice);
+    
 
     res.status(200).json(invoice);
   } catch (error) {
@@ -211,7 +211,7 @@ exports.updateInvoice = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-    console.log(error);
+    
     res.send("Internal server error");
   }
 };
@@ -229,7 +229,7 @@ exports.updateByIndex = async (req, res) => {
 
     res.status(200).json({ message: "Deleted successful" });
   } catch (error) {
-    console.log(error);
+     
     res.status(500).json({ error: "Internal server error" });
   }
 };

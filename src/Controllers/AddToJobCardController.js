@@ -9,7 +9,7 @@ exports.createAddToJobCard = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error);
+     
     res.send("Internal server error");
   }
 };
@@ -28,7 +28,7 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-    console.log(error);
+     
     res.send("Internal server error");
   }
 };
@@ -53,7 +53,7 @@ exports.getAllAddToJobCard = async (req, res) => {
 exports.filterCard = async (req, res) => {
   try {
     const { filterType } = req.body;
-    console.log(filterType);
+     
 
     const isNumeric = !isNaN(Number(filterType));
     const filterValue = isNumeric ? Number(filterType) : filterType;
@@ -234,7 +234,7 @@ exports.getPreviewJobNoCard = async (req, res) => {
 exports.getSpecificCard = async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
+   
     const jobCard = await AddToJobCard.findOne({ _id: id });
     res.status(200).json(jobCard);
   } catch (error) {

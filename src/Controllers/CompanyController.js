@@ -9,7 +9,7 @@ exports.createCompanyDetails = async (req, res) => {
       result,
     });
   } catch (error) {
-    console.log(error)
+     
     res.send("Internal server error");
   }
 };
@@ -167,7 +167,7 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-    console.log(error);
+     
     res.send("Internal server error");
   }
 };
