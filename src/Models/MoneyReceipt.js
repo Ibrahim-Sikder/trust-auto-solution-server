@@ -11,14 +11,14 @@ const moneyReceiptSchema = new mongoose.Schema(
       // required: [true],
     },
     against_bill_no: {
-      type: Number,
+      type: String,
       // required: [true],
     },
     vehicle_no: {
-      type: Number,
+      type: String,
     },
     cheque_no: {
-      type: Number,
+      type: String,
       // required: [true ],
     },
 
