@@ -15,7 +15,7 @@ const moneyReceiptSchema = new mongoose.Schema(
       // required: [true],
     },
     vehicle_no: {
-      type: Number,
+      type: Number  ,
     },
     cheque_no: {
       type: Number,
