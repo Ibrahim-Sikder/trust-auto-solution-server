@@ -122,7 +122,7 @@ const addToJobCardSchema = new mongoose.Schema(
     },
     technician_name: {
       type: String,
-      required: [true, "Technician name is required."],
+      // required: [true, "Technician name is required."],
     },
     technician_signature: {
       type: String,
@@ -130,7 +130,7 @@ const addToJobCardSchema = new mongoose.Schema(
     },
     technician_date: {
       type: String,
-      required: [true, "Technician date is required."],
+      // required: [true, "Technician date is required."],
     },
     vehicle_owner: {
       type: String,
