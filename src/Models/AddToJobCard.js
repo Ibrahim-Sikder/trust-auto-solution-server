@@ -117,6 +117,9 @@ const addToJobCardSchema = new mongoose.Schema(
     reported_action: {
       type: String,
     },
+    note: {
+      type: String,
+    },
     vehicle_body_report: {
       type: String,
     },
