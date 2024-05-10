@@ -5,53 +5,71 @@ const moneyReceiptSchema = new mongoose.Schema(
     Id: {
       type: String,
     },
+    job_no: {
+      type: Number,
+    },
+    default_date: {
+      type: String,
+    },
+    advance_select: {
+      type: Boolean,
+    },
+    final_payment: {
+      type: Boolean,
+    },
+    cash: {
+      type: Boolean,
+    },
+    cheque: {
+      type: Boolean,
+    },
 
     thanks_from: {
       type: String,
-      // required: [true],
+       
     },
     against_bill_no: {
       type: String,
-      // required: [true],
+      
     },
     vehicle_no: {
       type: String,
     },
     cheque_no: {
       type: String,
-      // required: [true ],
+       
     },
 
     date_one: {
       type: String,
-      // required: [true ],
+       
     },
 
     bank: {
       type: String,
-      // required: [true ],
+      
     },
 
     date_two: {
       type: String,
-      // required: [true ],
+       
     },
     total_amount: {
       type: Number,
-      // required: [true ],
+       
     },
     advance: {
       type: Number,
-      // required: [true ],
+       
     },
     remaining: {
       type: Number,
-      // required: [true ],
+       
     },
 
     taka_in_word: {
       type: String,
-      // required: [true ],
+       
     },
   },
   {
