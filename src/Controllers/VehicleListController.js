@@ -9,7 +9,6 @@ exports.createVehicleDetails = async (req, res) => {
       result,
     });
   } catch (error) {
-    
     res.send("Internal server error");
   }
 };
@@ -31,50 +30,74 @@ exports.getVehicleData = async (req, res) => {
   }
 };
 
-exports.filterCard = async (req, res) => {
+exports.filterCard = async (req, res, next) => {
   try {
-    const { filterType } = req.body;
-    
+    const filterType = req.body.filterType.trim();
+    let filteringData = "";
 
-    const isNumeric = !isNaN(Number(filterType));
-    const filterValue = isNumeric ? Number(filterType) : filterType;
-
-    let customer;
-
-    if (!isNumeric) {
-      // Case-insensitive partial string matching for string fields
-      customer = await Vehicle.find({
-        $or: [
-          { customer_name: { $regex: filterType, $options: "i" } },
-          { date: { $regex: filterType, $options: "i" } },
-          { car_registration_no: { $regex: filterType, $options: "i" } },
-        ].filter(Boolean),
-      });
-    } else {
-      // Exact match for numeric fields
-      customer = await Vehicle.find({
-        $or: [{ job_no: filterValue }, { customer_contact: filterValue }],
-      });
+    if (filterType) {
+      filteringData = filterType;
     }
 
-    if (!customer || customer.length === 0) {
+    const escapedFilteringData = filteringData.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
+
+    const searchFields = [
+      "chassis_no",
+      "engine_no",
+      "car_registration_no",
+      "fullRegNum",
+      "vehicle_name",
+    ];
+
+    const searchQuery = Vehicle.find({
+      $or: searchFields.map((field) => ({
+        [field]: { $regex: escapedFilteringData, $options: "i" },
+      })),
+    });
+
+    const vehicle = await searchQuery.exec();
+
+    if (!vehicle || vehicle.length === 0) {
       return res.json({ message: "No matching found", result: [] });
     }
 
-    res.json({ message: "Filter successful", result: customer });
+    res.json({ message: "Filter successful", result: vehicle });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-
 exports.getVehicleProfile = async (req, res) => {
   try {
     const id = req.params.id;
-    const vehicle = await Vehicle.find({
-      $or: [{ customerId: id }, { companyId: id }],
-    });
-    res.status(200).json(vehicle);
+    let limit = parseInt(req.query.limit);
+    let page = parseInt(req.query.page);
+    if (isNaN(page) || page < 1) {
+      page = 1;
+    }
+    let perPage;
+    if (limit) {
+      perPage = limit;
+    } else {
+      perPage = 10;
+    }
+
+    const skip = Math.max((page - 1) * perPage);
+
+    const allVehicle = await Vehicle.aggregate([
+      { $match: { Id: id } },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: perPage },
+    ]);
+
+    const totalData = await Vehicle.countDocuments({ Id: id });
+    const totalPages = Math.ceil(totalData / perPage);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    res.status(200).json({ allVehicle, pageNumbers, totalPages });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -85,8 +108,8 @@ exports.getSpecificCard = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const customer = await Vehicle.findOne({ _id: id });
-    res.status(200).json(customer);
+    const vehicle = await Vehicle.findOne({ _id: id });
+    res.status(200).json(vehicle);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -108,7 +131,6 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-    
     res.send("Internal server error");
   }
 };

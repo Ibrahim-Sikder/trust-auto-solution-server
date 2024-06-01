@@ -2,16 +2,16 @@ const mongoose = require("mongoose");
 
 const vehicleSchema = new mongoose.Schema(
   {
-    customerId: {
+     Id: {
       type: String,
       // required: [true, "Username is required."],
     },
-    companyId: {
-      type: String,
-    },
-    showRoomId: {
-      type: String,
-    },
+    // companyId: {
+    //   type: String,
+    // },
+    // showRoomId: {
+    //   type: String,
+    // },
 
     // Vehicle Information
 
@@ -20,15 +20,18 @@ const vehicleSchema = new mongoose.Schema(
       // required: [true, "Car Reg number is required."],
     },
     car_registration_no: {
-      type: String || Number,
+      type: String  ,
       // required: [true, "Car registration number is required."],
     },
+    fullRegNum: {
+      type: String,
+    },
     chassis_no: {
-      type: String || Number,
+      type: String  ,
       // required: [true, "Chassis number is required."],
     },
     engine_no: {
-      type: String || Number,
+      type: String,
       // required: [true, "Chassis number is required."],
     },
 
@@ -66,6 +69,31 @@ const vehicleSchema = new mongoose.Schema(
   }
 );
 
-const VehicleList = mongoose.model("VehicleList", vehicleSchema);
 
-module.exports = VehicleList;
+
+
+// Pre-save middleware to concatenate carReg_no and car_registration_no
+vehicleSchema.pre("save", function (next) {
+  if (this.carReg_no && this.car_registration_no) {
+    this.fullRegNum = `${this.carReg_no} ${this.car_registration_no}`;
+  } else {
+    this.fullRegNum = "";
+  }
+  next();
+});
+
+vehicleSchema.pre("updateOne", function (next) {
+  const update = this.getUpdate();
+
+  if (update.$set && update.$set.carReg_no && update.$set.car_registration_no) {
+    update.$set.fullRegNum = `${update.$set.carReg_no} ${update.$set.car_registration_no}`;
+  } else if (update.carReg_no && update.car_registration_no) {
+    update.fullRegNum = `${update.carReg_no} ${update.car_registration_no}`;
+  }
+
+  next();
+});
+
+const Vehicle = mongoose.model("Vehicle", vehicleSchema);
+
+module.exports = Vehicle;

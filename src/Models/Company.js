@@ -4,92 +4,90 @@ const companySchema = new mongoose.Schema(
   {
     companyId: {
       type: String,
-      // required: [true, "Username is required."],
+      unique: true,
+      required: [true, "Company Id is required."],
+    },
+
+    user_type: {
+      type: String,
+      default: "company",
+      required: true,
     },
     // Customer Information
 
     company_name: {
       type: String,
-      // required: [true, "Company name is required."],
     },
     username: {
       type: String,
-      // required: [true, "Username is required."],
     },
     company_address: {
       type: String,
-      // required: [true, "Company address is required."],
     },
-    
+    company_country_code: {
+      type: String,
+    },
     company_contact: {
-      type: Number,
-      // required: [true, "Customer contact is required."],
-      min: [11, "Phone number must be 11 character!"],
+      type: String,
+    },
+    fullCompanyNum: {
+      type: String,
     },
     company_email: {
       type: String,
-      // required: [true, "Customer email is required."],
     },
-     
+
     driver_name: {
       type: String,
-      // required: [true, "Driver name is required."],
+    },
+    driver_country_code: {
+      type: String,
     },
     driver_contact: {
-      type: Number,
-      min: [11, "Phone number must be 11 character!"],
+      type: String,
     },
     reference_name: {
       type: String,
-      // required: [true, "Reference name is required."],
     },
 
     // Vehicle Information
 
     carReg_no: {
       type: String,
-      // required: [true, "Car Reg number is required."],
     },
     car_registration_no: {
-      type: String || Number,
-      // required: [true, "Car registration number is required."],
+      type: String,
+    },
+    fullRegNum: {
+      type: String,
     },
     chassis_no: {
-      type: String || Number,
-      // required: [true, "Chassis number is required."],
+      type: String,
     },
     engine_no: {
-      type: String || Number,
-      // required: [true, "Chassis number is required."],
+      type: String,
     },
 
     vehicle_brand: {
       type: String,
-      // required: [true, "Vehicle brand is required."],
     },
     vehicle_name: {
       type: String,
-      // required: [true, "Vehicle name is required."],
     },
     vehicle_model: {
       type: Number,
-      // required: [true, "Vehicle model is required."],
     },
     vehicle_category: {
       type: String,
-      // required: [true, "Vehicle category is required."],
     },
     color_code: {
       type: String,
-      // required: [true, "Color code is required."],
     },
     mileage: {
       type: Number,
-      // required: [true, "Mileage is required."],
     },
     fuel_type: {
-      type: String || Number,
-      // required: [true, "Color is required."],
+      type: String,
     },
   },
   {
@@ -97,6 +95,54 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-const CompanyList = mongoose.model("CompanyList", companySchema);
+// Pre-save middleware to concatenate carReg_no and car_registration_no
+companySchema.pre("save", function (next) {
+  if (this.carReg_no && this.car_registration_no) {
+    this.fullRegNum = `${this.carReg_no} ${this.car_registration_no}`;
+  } else {
+    this.fullRegNum = "";
+  }
+  next();
+});
 
-module.exports = CompanyList;
+companySchema.pre("updateOne", function (next) {
+  const update = this.getUpdate();
+
+  if (update.$set && update.$set.carReg_no && update.$set.car_registration_no) {
+    update.$set.fullRegNum = `${update.$set.carReg_no} ${update.$set.car_registration_no}`;
+  } else if (update.carReg_no && update.car_registration_no) {
+    update.fullRegNum = `${update.carReg_no} ${update.car_registration_no}`;
+  }
+
+  next();
+});
+
+// Pre-save middleware to concatenate company_country_code and company_contact
+companySchema.pre("save", function (next) {
+  if (this.company_country_code && this.company_contact) {
+    this.fullCompanyNum = `${this.company_country_code}${this.company_contact}`;
+  } else {
+    this.fullCompanyNum = "";
+  }
+  next();
+});
+
+companySchema.pre("updateOne", function (next) {
+  const update = this.getUpdate();
+
+  if (
+    update.$set &&
+    update.$set.company_country_code &&
+    update.$set.company_contact
+  ) {
+    update.$set.fullCompanyNum = `${update.$set.company_country_code}${update.$set.company_contact}`;
+  } else if (update.company_country_code && update.company_contact) {
+    update.fullCompanyNum = `${update.company_country_code}${update.company_contact}`;
+  }
+
+  next();
+});
+
+const Company = mongoose.model("Company", companySchema);
+
+module.exports = Company;

@@ -21,6 +21,7 @@ const expenseRoute = require("./src/Routes/ExpenseRoute");
 const multer = require("multer");
 
 const cloudinary = require("./src/utils/cloudinary");
+const { globalErrorHandle } = require("./src/middleware/error-handling");
 
  
 // middleware
@@ -79,6 +80,9 @@ app.post("/api/v1/uploads", upload.single("image"), async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Trust Auto Solution");
 });
+
+app.use(globalErrorHandle);
+
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);

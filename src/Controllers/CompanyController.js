@@ -1,69 +1,80 @@
 const Company = require("../Models/Company");
+const { generateCompanyId } = require("./utils/companyId");
 
-exports.createCompanyDetails = async (req, res) => {
+exports.createCompanyDetails = async (req, res, next) => {
   try {
     const companyCreated = new Company(req.body);
+
+    companyCreated.companyId = await generateCompanyId();
+
     const result = await companyCreated.save();
+
     res.status(200).json({
       message: "Successfully add to company post",
       result,
     });
   } catch (error) {
-     
-    res.send("Internal server error");
+    next(error);
   }
 };
 
-
-
-exports.getCompanyData = async (req, res) => {
+exports.getCompanyData = async (req, res, next) => {
   try {
-    const allPost = await Company.find({}).sort({
-      createdAt: -1,
-    });
-    if (allPost.length === 0) {
-      return res.json({
-        message: "No card found.",
-      });
+    let page = parseInt(req.query.page);
+    if (isNaN(page) || page < 1) {
+      page = 1;
     }
-    res.json(allPost);
+
+    const perPage = 10;
+    const skip = Math.max((page - 1) * perPage);
+
+    const allCompany = await Company.aggregate([
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: perPage },
+    ]);
+
+    const totalData = await Company.countDocuments();
+    const totalPages = Math.ceil(totalData / perPage);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    res.status(200).json({ allCompany, pageNumbers, totalPages });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
-
-
- 
-exports.filterCard = async (req, res) => {
+exports.filterCard = async (req, res, next) => {
   try {
-    const { filterType } = req.body;
-   
+    const filterType = req.body.filterType.trim();
+    let filteringData = "";
 
-    const isNumeric = !isNaN(Number(filterType));
-    const filterValue = isNumeric ? Number(filterType) : filterType;
-
-    let company;
-
-    if (!isNumeric) {
-      // Case-insensitive partial string matching for string fields
-      company = await Company.find({
-        $or: [
-          { Company_name: { $regex: filterType, $options: "i" } },
-          { date: { $regex: filterType, $options: "i" } },
-          { car_registration_no: { $regex: filterType, $options: "i" } },
-        ].filter(Boolean),
-      });
-    } else {
-      // Exact match for numeric fields
-      company = await Company.find({
-        $or: [
-          { job_no: filterValue },
-          { Company_contact: filterValue },
-        ],
-      });
+    if (filterType) {
+      filteringData = filterType;
     }
+
+    const escapedFilteringData = filteringData.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
+
+    const searchFields = [
+      "companyId",
+      "company_name",
+      "car_registration_no",
+      "fullRegNum",
+      "vehicle_name",
+      "fullCompanyNum",
+      "company_contact",
+    ];
+
+    const searchQuery = Company.find({
+      $or: searchFields.map((field) => ({
+        [field]: { $regex: escapedFilteringData, $options: "i" },
+      })),
+    });
+
+    const company = await searchQuery.exec();
 
     if (!company || company.length === 0) {
       return res.json({ message: "No matching found", result: [] });
@@ -71,92 +82,37 @@ exports.filterCard = async (req, res) => {
 
     res.json({ message: "Filter successful", result: company });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
- 
 
-// exports.getRecentPostAddToJobCard = async (req, res) => {
-//   try {
-//     const recentPostJobCard = await Company.find({})
-//       .sort({ createdAt: -1 })
-//       .limit(1);
-
-//     if (recentPostJobCard.length === 0) {
-//       return res.json({
-//         message: "No recent job card found.",
-//       });
-//     }
-
-//     res.json(recentPostJobCard[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-// exports.getRecentAddToJobCard = async (req, res) => {
-//   try {
-//     const recentJobCard = await Company.find({})
-//       .sort({ job_no: -1 })
-//       .limit(1);
-
-//     if (recentJobCard.length === 0) {
-//       return res.json({
-//         message: "No recent job card found.",
-//       });
-//     }
-
-//     res.json(recentJobCard[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-exports.getCompanyProfile = async (req, res) => {
+exports.getCompanyProfile = async (req, res, next) => {
   try {
     const id = req.params.id;
     const company = await Company.findOne({ companyId: id });
     res.status(200).json(company);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-// exports.getPreviewJobNoCard = async (req, res) => {
-//   try {
-//     const job_no = req.params.job_no;
-//     const jobCard = await Company.findOne({job_no });
-  
-//     // if (jobCard.length === 0) {
-//     //   return res.json({
-//     //     message: "No job card found.",
-//     //   });
-//     // }
 
-//     res.status(200).json(jobCard);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-exports.getSpecificCard = async (req, res) => {
+exports.getSpecificCard = async (req, res, next) => {
   try {
     const id = req.params.id;
- 
+
     const company = await Company.findOne({ _id: id });
     res.status(200).json(company);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
-exports.updateCard = async (req, res) => {
+exports.updateCard = async (req, res, next) => {
   try {
     const id = req.params.id;
     const updateCard = req.body;
-    const updateInfo = await Company.updateMany(
+
+    const updateInfo = await Company.updateOne(
       { _id: id },
       {
         $set: updateCard,
@@ -167,17 +123,15 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-     
-    res.send("Internal server error");
+    next(error);
   }
 };
-exports.deleteCompany = async (req, res) => {
+exports.deleteCompany = async (req, res, next) => {
   try {
     const id = req.params.id;
     const company = await Company.deleteOne({ _id: id });
     res.status(200).json({ message: "Company card delete successful" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };

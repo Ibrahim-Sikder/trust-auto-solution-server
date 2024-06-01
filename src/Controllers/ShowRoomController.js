@@ -1,60 +1,77 @@
 const ShowRoomList = require("../Models/ShowRoom");
+const { generateShowRoomId } = require("./utils/showRoomId");
 
-exports.createShowRoomDetails = async (req, res) => {
+exports.createShowRoomDetails = async (req, res, next) => {
   try {
     const showRoomListCreated = new ShowRoomList(req.body);
+
+    showRoomListCreated.showRoomId = await generateShowRoomId();
+
     const result = await showRoomListCreated.save();
     res.status(200).json({
       message: "Successfully add to show room post",
       result,
     });
   } catch (error) {
-     
-    res.send("Internal server error");
+    next(error);
   }
 };
 
 exports.getShowRoom = async (req, res) => {
   try {
-    const allPost = await ShowRoomList.find({}).sort({
-      createdAt: -1,
-    });
-    if (allPost.length === 0) {
-      return res.json({
-        message: "No card found.",
-      });
+    let page = parseInt(req.query.page);
+    if (isNaN(page) || page < 1) {
+      page = 1;
     }
-    res.json(allPost);
+    const perPage = 10;
+    const skip = Math.max((page - 1) * perPage);
+
+    const allShowRoom = await ShowRoomList.aggregate([
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: perPage },
+    ]);
+
+    const totalData = await ShowRoomList.countDocuments();
+    const totalPages = Math.ceil(totalData / perPage);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    res.status(200).json({ allShowRoom, pageNumbers, totalPages });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
-exports.filterCard = async (req, res) => {
+exports.filterCard = async (req, res, next) => {
   try {
-    const { filterType } = req.body;
+    const filterType = req.body.filterType.trim();
+    let filteringData = "";
 
-    const isNumeric = !isNaN(Number(filterType));
-    const filterValue = isNumeric ? Number(filterType) : filterType;
-
-    let showRoom;
-
-    if (!isNumeric) {
-      // Case-insensitive partial string matching for string fields
-      showRoom = await ShowRoomList.find({
-        $or: [
-          { company_name: { $regex: filterType, $options: "i" } },
-          { date: { $regex: filterType, $options: "i" } },
-          { car_registration_no: { $regex: filterType, $options: "i" } },
-        ].filter(Boolean),
-      });
-    } else {
-      // Exact match for numeric fields
-      showRoom = await ShowRoomList.find({
-        $or: [{ job_no: filterValue }, { company_contact: filterValue }],
-      });
+    if (filterType) {
+      filteringData = filterType;
     }
+
+    const escapedFilteringData = filteringData.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&"
+    );
+
+    const searchFields = [
+      "showRoomId",
+      "showRoom_name",
+      "car_registration_no",
+      "fullRegNum",
+      "fullCompanyNum",
+      "company_contact",
+    ];
+
+    const searchQuery = ShowRoomList.find({
+      $or: searchFields.map((field) => ({
+        [field]: { $regex: escapedFilteringData, $options: "i" },
+      })),
+    });
+
+    const showRoom = await searchQuery.exec();
 
     if (!showRoom || showRoom.length === 0) {
       return res.json({ message: "No matching found", result: [] });
@@ -62,47 +79,10 @@ exports.filterCard = async (req, res) => {
 
     res.json({ message: "Filter successful", result: showRoom });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
-// exports.getRecentPostAddToJobCard = async (req, res) => {
-//   try {
-//     const recentPostJobCard = await ShowRoomList.find({})
-//       .sort({ createdAt: -1 })
-//       .limit(1);
-
-//     if (recentPostJobCard.length === 0) {
-//       return res.json({
-//         message: "No recent job card found.",
-//       });
-//     }
-
-//     res.json(recentPostJobCard[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-// exports.getRecentAddToJobCard = async (req, res) => {
-//   try {
-//     const recentJobCard = await ShowRoomList.find({})
-//       .sort({ job_no: -1 })
-//       .limit(1);
-
-//     if (recentJobCard.length === 0) {
-//       return res.json({
-//         message: "No recent job card found.",
-//       });
-//     }
-
-//     res.json(recentJobCard[0]);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
 exports.getShowRoomProfile = async (req, res) => {
   try {
     const id = req.params.id;
@@ -115,23 +95,7 @@ exports.getShowRoomProfile = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-// exports.getPreviewJobNoCard = async (req, res) => {
-//   try {
-//     const job_no = req.params.job_no;
-//     const jobCard = await ShowRoomList.findOne({job_no });
 
-//     // if (jobCard.length === 0) {
-//     //   return res.json({
-//     //     message: "No job card found.",
-//     //   });
-//     // }
-
-//     res.status(200).json(jobCard);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
 exports.getSpecificCard = async (req, res) => {
   try {
     const id = req.params.id;
@@ -148,6 +112,7 @@ exports.updateCard = async (req, res) => {
   try {
     const id = req.params.id;
     const updateCard = req.body;
+
     const updateInfo = await ShowRoomList.updateMany(
       { _id: id },
       {
@@ -159,7 +124,6 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-     
     res.send("Internal server error");
   }
 };

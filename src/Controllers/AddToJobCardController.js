@@ -1,6 +1,6 @@
 const AddToJobCard = require("../Models/AddToJobCard");
 
-exports.createAddToJobCard = async (req, res) => {
+exports.createAddToJobCard = async (req, res, next) => {
   try {
     const addToCardPost = new AddToJobCard(req.body);
     const result = await addToCardPost.save();
@@ -9,11 +9,10 @@ exports.createAddToJobCard = async (req, res) => {
       result,
     });
   } catch (error) {
-     
-    res.send("Internal server error");
+    next(error)
   }
 };
-exports.updateCard = async (req, res) => {
+exports.updateCard = async (req, res, next) => {
   try {
     const id = req.params.id;
     const updateCard = req.body;
@@ -28,12 +27,11 @@ exports.updateCard = async (req, res) => {
       message: "Successfully update card.",
     });
   } catch (error) {
-     
-    res.send("Internal server error");
+    next(error)
   }
 };
 
-exports.getAllAddToJobCard = async (req, res) => {
+exports.getAllAddToJobCard = async (req, res, next) => {
   try {
     // const username = req.params.username;
     const allJobCard = await AddToJobCard.find({}).sort({
@@ -46,14 +44,13 @@ exports.getAllAddToJobCard = async (req, res) => {
     }
     res.json(allJobCard);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error)
   }
 };
-exports.filterCard = async (req, res) => {
+
+exports.filterCard = async (req, res, next) => {
   try {
     const { filterType } = req.body;
-     
 
     const isNumeric = !isNaN(Number(filterType));
     const filterValue = isNumeric ? Number(filterType) : filterType;
@@ -82,8 +79,7 @@ exports.filterCard = async (req, res) => {
 
     res.json({ message: "Filter successful", result: quotation });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
@@ -140,7 +136,7 @@ exports.filterCard = async (req, res) => {
 //   }
 // };
 
-exports.getRecentPostAddToJobCard = async (req, res) => {
+exports.getRecentPostAddToJobCard = async (req, res, next) => {
   try {
     const recentPostJobCard = await AddToJobCard.find({})
       .sort({ createdAt: -1 })
@@ -154,11 +150,10 @@ exports.getRecentPostAddToJobCard = async (req, res) => {
 
     res.json(recentPostJobCard[0]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-exports.getRecentAddToJobCard = async (req, res) => {
+exports.getRecentAddToJobCard = async (req, res, next) => {
   try {
     const recentJobCard = await AddToJobCard.find({})
       .sort({ job_no: -1 })
@@ -172,31 +167,25 @@ exports.getRecentAddToJobCard = async (req, res) => {
 
     res.json(recentJobCard[0]);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-exports.getPreviewJobCard = async (req, res) => {
+exports.getPreviewJobCard = async (req, res, next) => {
   try {
     const id = req.params.id;
     const jobCard = await AddToJobCard.findOne({ _id: id });
 
-    // if (jobCard.length === 0) {
-    //   return res.json({
-    //     message: "No job card found.",
-    //   });
-    // }
+    
 
     res.status(200).json(jobCard);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-exports.getCardWithCustomerId = async (req, res) => {
+exports.getCardWithCustomerId = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const jobCard = await AddToJobCard.find({Id : id});
+    const jobCard = await AddToJobCard.find({ Id: id });
 
     if (jobCard.length === 0) {
       return res.json({
@@ -209,12 +198,11 @@ exports.getCardWithCustomerId = async (req, res) => {
       jobCard,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
 
-exports.getPreviewJobNoCard = async (req, res) => {
+exports.getPreviewJobNoCard = async (req, res, next) => {
   try {
     const job_no = req.params.job_no;
     const jobCard = await AddToJobCard.findOne({ job_no });
@@ -227,28 +215,25 @@ exports.getPreviewJobNoCard = async (req, res) => {
 
     res.status(200).json(jobCard);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-exports.getSpecificCard = async (req, res) => {
+exports.getSpecificCard = async (req, res, next) => {
   try {
     const id = req.params.id;
-   
+
     const jobCard = await AddToJobCard.findOne({ _id: id });
     res.status(200).json(jobCard);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
-exports.deleteJobCard = async (req, res) => {
+exports.deleteJobCard = async (req, res, next) => {
   try {
     const id = req.params.id;
     const jobCard = await AddToJobCard.deleteOne({ _id: id });
     res.status(200).json({ message: "Job card delete successful" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    next(error);
   }
 };
